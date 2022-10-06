@@ -1,19 +1,30 @@
 from db import db
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class StudentModel(db.Model):
     __tablename__ = 'students'
     personal_id_number = db.Column(db.String(9), primary_key=True, autoincrement=False)
-    name = db.Column(db.String(80))
-    surname = db.Column(db.String(80))
-    class_ = db.Column(db.String(3), db.ForeignKey('classes.class_'))
-    class_name = db.relationship('ClassModel')
-    
+    name = db.Column(db.String(80), nullable=False)
+    surname = db.Column(db.String(80), nullable=False)
+    class_ = db.Column(db.String(3))
+    password_hash = db.Column(db.String(128))
 
-    def __init__(self, personal_id_number, name, surname, class_):
+    @property
+    def password(self):
+        raise AttributeError('password is not a readable attribute!')
+    @password.setter
+    def password(self, password):
+        self.password_hash = generate_password_hash(password)
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+
+    def __init__(self, personal_id_number, name, surname, class_, password):
         self.personal_id_number = personal_id_number
         self.name = name
         self.surname = surname
         self.class_ = class_
+        self.password = password
 
     def json(self):
         return {"personal_id_number": self.personal_id_number,
@@ -21,6 +32,7 @@ class StudentModel(db.Model):
                 "surname": self.surname,
                 "class": self.class_
                 }
+                
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
@@ -29,7 +41,7 @@ class StudentModel(db.Model):
         db.session.commit()
     @classmethod
     def find_all(cls):
-        return cls.query.all()
+        return cls.query.order_by(cls.surname)
     @classmethod
     def find_by_id(cls, personal_id_number):
         return cls.query.filter_by(personal_id_number=personal_id_number).first()

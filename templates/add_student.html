@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+a {
+  color: inherit;
+  background:none;
+  border:none;
+}
+
+a:link {
+  outline: none; /* removes outline */
+  text-decoration: none;
+}
+a:hover {color: black;}
+#delete {
+    color: red;
+}
+#add {
+  background-color: white;
+  border: none;
+  color: grey; 
+  font-size: 25px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+#add:hover {
+    background-color: #f2f2f2; 
+}
+</style>
+
+{% for message in get_flashed_messages() %}
+	
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+	  {{ message }}
+	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+
+	
+{% endfor %}
+
+
+{% if name %}
+	<h1>Student Added!</h1>
+	<br/><br/>
+    <table class="table">
+        <thead>
+    <tr>
+        <th scope="col">First Name</th>
+        <th scope="col">Last Name</th>
+        <th scope="col">Personal ID Number</th>
+        <th scope="col">Class</th>
+    </tr>
+        </thead>
+    <tbody class="table table-group-divider">
+    {%for student in students%}
+    <tr>
+    <td WIDTH=200><a href="{{url_for('update', personal_id_number=student.personal_id_number)}}">{{student.name|capitalize}}</a></td> 
+    <td WIDTH=200>{{student.surname|capitalize}}</td> 
+    <td WIDTH=200>{{student.personal_id_number}}</td> 
+    <td WIDTH=200>{{student.class_}}</td>
+    <td WIDTH=200 id="delete"><a href="{{url_for('delete', personal_id_number=student.personal_id_number)}}">X</a></td>
+</tr>       
+    {%endfor%}
+    </tbody>
+    </table>
+    <a href="{{url_for('add_student')}}" id="add" class="btn btn-primary"><i class="fa fa-plus-square"></i></a>
+
+{%else%}
+
+<br/>
+<div class="shadow  p-3 mb-5 bg-body rounded">
+<h4> Add Student </h4>
+<br/>
+<form method="POST" action="{{ url_for('add_student')}}">
+    {{ form.hidden_tag()}}
+
+
+    {{ form.name.label(
+        class="form-label")}}
+    {{ form.name(
+        class="form-control")}}
+    <br/>
+    {{ form.surname.label(
+        class="form-label")}}
+    {{ form.surname(
+        class="form-control")}}
+    <br/>
+    {{ form.class_.label(
+        class="form-label")}}
+    {{ form.class_(
+        class="form-control")}}
+    <br/>
+    {{ form.personal_id_number.label(
+        class="form-label")}}
+    {{ form.personal_id_number(
+        class="form-control")}}
+    <br/>
+    {{ form.password_hash.label(
+        class="form-label")}}
+    {{ form.password_hash(
+        class="form-control")}}
+    <br/>
+    {{ form.password_hash2.label(
+        class="form-label")}}
+    {{ form.password_hash2(
+        class="form-control")}}
+    <br/>
+    {{ form.submit(class ="btn btn-secondary") }}
+
+</form> 
+</div>
+
+<br/><br/>
+
+<h1> Students </h1>
+<table class="table">
+    <thead>
+<tr>
+    <th scope="col">First Name</th>
+    <th scope="col">Last Name</th>
+    <th scope="col">Personal ID Number</th>
+    <th scope="col">Class</th>
+</tr>
+    </thead>
+<tbody class="table table-group-divider">
+{%for student in students%}
+<tr>
+<td WIDTH=200><a href="{{url_for('update', personal_id_number=student.personal_id_number)}}">{{student.name|capitalize}}</a></td> 
+<td WIDTH=200>{{student.surname|capitalize}}</td> 
+<td WIDTH=200>{{student.personal_id_number}}</td> 
+<td WIDTH=200>{{student.class_}}</td>
+<td WIDTH=50 id="delete"><a href="{{url_for('delete', personal_id_number=student.personal_id_number)}}">X</a></td>
+</tr>
+{%endfor%}
+</tbody>
+</table>
+{% endif %}
+
+{% endblock %}
