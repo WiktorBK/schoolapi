@@ -4,15 +4,16 @@ from db import db
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
-from forms import StudentForm
+from forms import StudentForm, ClassForm
 from flask_migrate import Migrate
 from models.student import StudentModel
 from werkzeug.security import generate_password_hash, check_password_hash
+from models.class_ import ClassModel
 
 
 app = Flask(__name__)
 api = Api(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Qwerty1%40@localhost/schoolsystem'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Qwerty1%40@localhost/schoolapi'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['SECRET_KEY'] = "top_secret"
@@ -38,24 +39,26 @@ def add_student():
     headers = {'Content-Type': 'text/html'}
     name = None
     form = StudentForm()
+    classes = ClassModel.find_all()
+    form.class_id.choices = [class_.class_id for class_ in classes]
     if form.validate_on_submit():
         student = StudentModel.find_by_id(form.personal_id_number.data)
         if student is None:
             hashed_pw = generate_password_hash(form.password_hash.data, "sha256")
-            student = StudentModel(form.personal_id_number.data, form.name.data, form.surname.data, form.class_.data, hashed_pw)
+            student = StudentModel(form.personal_id_number.data, form.name.data, form.surname.data, form.class_id.data, hashed_pw)
             student.save_to_db()
             name = form.name.data
             form.name.data = ''
             form.surname.data= ''
-            form.class_.data = ''
+            form.class_id.data = ''
             form.personal_id_number.data = ''
             form.password_hash.data = ''
             form.password_hash2.data = ''
             flash("Student Added Successfully")
     
     students = StudentModel.find_all()
-
-    return make_response(render_template("add_student.html", form=form,name=name, students=students), 200, headers)
+    classes = ClassModel.find_all()
+    return make_response(render_template("add_student.html", form=form,name=name, students=students, classes=classes), 200, headers)
 
 @app.route("/update/<string:personal_id_number>", methods=['GET', 'POST'])
 def update(personal_id_number):
@@ -75,7 +78,7 @@ def update(personal_id_number):
                     flash("Student Updated Successfully!")
                     form.name.data = ''
                     form.surname.data= ''
-                    form.class_.data = ''
+                    form.class_id.data = ''
                     form.personal_id_number.data = ''
                     return render_template("students.html", students=students)
                except:
@@ -106,6 +109,24 @@ def delete(personal_id_number):
 def students():
      students = StudentModel.find_all()
      return render_template("students.html", students=students)
+
+@app.route("/class/add", methods=["GET", "POST"])
+def add_class():
+     form = ClassForm()
+     class_id = None
+     if form.validate_on_submit():
+        class_ = ClassModel.find_by_id(form.class_id.data)
+        if class_ is None:
+            class_id = form.class_id.data
+            class_ = ClassModel(form.class_id.data)
+            class_.save_to_db()
+            form.class_id.data = ''
+            flash("Class Added Successfully")
+    
+     classes = ClassModel.find_all()
+
+     return render_template("add_class.html", class_id=class_id, form=form, classes=classes)
+
 
 
 

@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+a {
+  color: inherit;
+  background:none;
+  border:none;
+}
+
+a:link {
+  outline: none; /* removes outline */
+  text-decoration: none;
+}
+a:hover {color: black;}
+#delete {
+    color: red;
+}
+#add {
+  background-color: white;
+  border: none;
+  color: grey; 
+  font-size: 25px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+#add:hover {
+    background-color: #f2f2f2; 
+}
+</style>
+
+{% for message in get_flashed_messages() %}
+	
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+	  {{ message }}
+	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+
+{% endfor %}
+
+
+{% if class_id %}
+	<h1>Class Added!</h1>
+	<br/><br/>
+    <table class="table">
+        <thead>
+    <tr>
+
+        <th scope="col">Class</th>
+    </tr>
+        </thead>
+    <tbody class="table table-group-divider">
+    {%for class_ in classes%}
+    <tr>
+    <td WIDTH=200>{{class_.class_id}}</td>
+
+</tr>       
+    {%endfor%}
+    </tbody>
+    </table>
+    <a href="{{url_for('add_class')}}" id="add" class="btn btn-primary"><i class="fa fa-plus-square"></i></a>
+
+{%else%}
+
+<br/>
+<div class="shadow  p-3 mb-5 bg-body rounded">
+<h4> Add Class </h4>
+<br/>
+<form method="POST" action="{{ url_for('add_class')}}">
+    {{ form.hidden_tag()}}
+
+
+    {{ form.class_id.label(
+        class="form-label")}}
+    {{ form.class_id(
+        class="form-control")}}
+    <br/>
+
+    {{ form.submit(class ="btn btn-secondary") }}
+
+</form> 
+</div>
+
+<br/><br/>
+
+<h1> Classes </h1>
+<table class="table">
+    <thead>
+<tr>
+    <th scope="col">Class</th>
+
+</tr>
+    </thead>
+<tbody class="table table-group-divider">
+{%for class_ in classes%}
+<tr>
+<td WIDTH=200>{{class_.class_id}}</td>
+</tr>
+{%endfor%}
+</tbody>
+</table>
+{% endif %}
+
+{% endblock %}

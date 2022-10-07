@@ -57,7 +57,7 @@ a:hover {color: black;}
     <td WIDTH=200><a href="{{url_for('update', personal_id_number=student.personal_id_number)}}">{{student.name|capitalize}}</a></td> 
     <td WIDTH=200>{{student.surname|capitalize}}</td> 
     <td WIDTH=200>{{student.personal_id_number}}</td> 
-    <td WIDTH=200>{{student.class_}}</td>
+    <td WIDTH=200>{{student.class_id}}</td>
     <td WIDTH=200 id="delete"><a href="{{url_for('delete', personal_id_number=student.personal_id_number)}}">X</a></td>
 </tr>       
     {%endfor%}
@@ -85,10 +85,10 @@ a:hover {color: black;}
     {{ form.surname(
         class="form-control")}}
     <br/>
-    {{ form.class_.label(
-        class="form-label")}}
-    {{ form.class_(
-        class="form-control")}}
+        {{ form.class_id.label(
+            class="form-label")}}
+        {{ form.class_id(
+            class="form-control", value="")}}
     <br/>
     {{ form.personal_id_number.label(
         class="form-label")}}
@@ -104,6 +104,8 @@ a:hover {color: black;}
         class="form-label")}}
     {{ form.password_hash2(
         class="form-control")}}
+    <br/>
+
     <br/>
     {{ form.submit(class ="btn btn-secondary") }}
 
@@ -128,7 +130,7 @@ a:hover {color: black;}
 <td WIDTH=200><a href="{{url_for('update', personal_id_number=student.personal_id_number)}}">{{student.name|capitalize}}</a></td> 
 <td WIDTH=200>{{student.surname|capitalize}}</td> 
 <td WIDTH=200>{{student.personal_id_number}}</td> 
-<td WIDTH=200>{{student.class_}}</td>
+<td WIDTH=200>{{student.class_id}}</td>
 <td WIDTH=50 id="delete"><a href="{{url_for('delete', personal_id_number=student.personal_id_number)}}">X</a></td>
 </tr>
 {%endfor%}

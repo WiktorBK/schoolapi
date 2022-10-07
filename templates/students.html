@@ -57,7 +57,7 @@ a:hover {color: black;}
 <td WIDTH=200><a href="{{url_for('update', personal_id_number=student.personal_id_number)}}">{{student.name|capitalize}}</a></td> 
 <td WIDTH=200>{{student.surname|capitalize}}</td> 
 <td WIDTH=200>{{student.personal_id_number}}</td> 
-<td WIDTH=200>{{student.class_}}</td>
+<td WIDTH=200>{{student.class_id}}</td>
 <td WIDTH=50 id="delete"><a href="{{url_for('delete', personal_id_number=student.personal_id_number)}}">X</a></td>
 </tr>
 {%endfor%}

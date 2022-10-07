@@ -1,12 +1,13 @@
 from db import db
 from werkzeug.security import generate_password_hash, check_password_hash
+from models.class_ import ClassModel
 
 class StudentModel(db.Model):
     __tablename__ = 'students'
     personal_id_number = db.Column(db.String(9), primary_key=True, autoincrement=False)
     name = db.Column(db.String(80), nullable=False)
     surname = db.Column(db.String(80), nullable=False)
-    class_ = db.Column(db.String(3))
+    class_id = db.Column(db.String(3), db.ForeignKey(ClassModel.class_id))   
     password_hash = db.Column(db.String(128))
 
     @property
@@ -19,11 +20,11 @@ class StudentModel(db.Model):
         return check_password_hash(self.password_hash, password)
 
 
-    def __init__(self, personal_id_number, name, surname, class_, password):
+    def __init__(self, personal_id_number, name, surname, class_id, password):
         self.personal_id_number = personal_id_number
         self.name = name
         self.surname = surname
-        self.class_ = class_
+        self.class_id = class_id
         self.password = password
 
     def json(self):

@@ -27,7 +27,7 @@
     <tbody class="table table-group-divider">
     {%for student in students%}
     <tr>
-    <td WIDTH=200>{{student.name|capitalize}}</td> <td WIDTH=200>{{student.surname|capitalize}}</td> <td WIDTH=200>{{student.personal_id_number}}</td> <td WIDTH=200>{{student.class_}}</td>
+    <td WIDTH=200>{{student.name|capitalize}}</td> <td WIDTH=200>{{student.surname|capitalize}}</td> <td WIDTH=200>{{student.personal_id_number}}</td> <td WIDTH=200>{{student.class_id}}</td>
     </tr>
     {%endfor%}
     </tbody>
@@ -53,10 +53,10 @@
     {{ form.surname(
         class="form-control", value=student_to_update.surname)}}
     <br/>
-    {{ form.class_.label(
+    {{ form.class_id.label(
         class="form-label")}}
-    {{ form.class_(
-        class="form-control", value=student_to_update.class_)}}
+    {{ form.class_id(
+        class="form-control", value=student_to_update.class_id)}}
     <br/>
     {{ form.personal_id_number.label(
         class="form-label")}}
