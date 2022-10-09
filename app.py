@@ -13,12 +13,15 @@ from models.class_ import ClassModel
 
 app = Flask(__name__)
 api = Api(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Qwerty1%40@localhost/schoolapi'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Qwerty1%40@localhost/schoolsystem'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['SECRET_KEY'] = "top_secret"
 
 db.init_app(app)
+@app.before_first_request
+def create_tables():
+     db.create_all()
 migrate = Migrate(app, db)
 
 
