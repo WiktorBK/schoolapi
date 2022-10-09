@@ -32,7 +32,10 @@ def internal_server_error(e):
 
 @app.route("/")
 def home():
-     return render_template('index.html')
+     classes = ClassModel.find_all()
+     
+
+     return render_template('index.html', classes=classes)
 
 @app.route("/student/add", methods=["GET", "POST"])
 def add_student():
