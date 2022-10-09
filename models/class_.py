@@ -2,6 +2,7 @@ from db import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class ClassModel(db.Model):
+    __tablename__ = 'classes'
     class_id = db.Column(db.String(3), primary_key=True)
     students = db.relationship('StudentModel', backref='student')
 
