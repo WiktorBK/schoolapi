@@ -63,15 +63,17 @@ a:hover {color: black;}
     {%endfor%}
     </tbody>
     </table>
-    <a href="{{url_for('add_student')}}" id="add" class="btn btn-primary"><i class="fa fa-plus-square"></i></a>
+    <a href="{{url_for('add_student_to_class', class_id = class_.class_id)}}" id="add" class="btn btn-primary"><i class="fa fa-plus-square"></i></a>
 
 {%else%}
 
 <br/>
-<div class="shadow  p-3 mb-5 bg-body rounded">
-<h4> Add Student </h4>
+<h1>{{class_.class_id}}</h1>
 <br/>
-<form method="POST" action="{{ url_for('add_student')}}">
+<div class="shadow  p-3 mb-5 bg-body rounded">
+<h4>Add Student</h4>
+<br/>
+<form method="POST" action="{{ url_for('add_student_to_class', class_id = class_.class_id)}}">
     {{ form.hidden_tag()}}
 
 

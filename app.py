@@ -3,7 +3,7 @@ from flask import Flask, render_template, make_response, flash, request
 from db import db
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Length
 from forms import StudentForm, ClassForm
 from flask_migrate import Migrate
 from models.student import StudentModel
@@ -36,7 +36,6 @@ def internal_server_error(e):
 @app.route("/")
 def home():
      classes = ClassModel.find_all()
-     
 
      return render_template('index.html', classes=classes)
 
@@ -50,16 +49,12 @@ def add_student():
     if form.validate_on_submit():
         student = StudentModel.find_by_id(form.personal_id_number.data)
         if student is None:
-            hashed_pw = generate_password_hash(form.password_hash.data, "sha256")
-            student = StudentModel(form.personal_id_number.data, form.name.data, form.surname.data, form.class_id.data, hashed_pw)
+            student = StudentModel(form.personal_id_number.data, form.name.data, form.surname.data, form.class_id.data)
             student.save_to_db()
             name = form.name.data
             form.name.data = ''
             form.surname.data= ''
             form.class_id.data = ''
-            form.personal_id_number.data = ''
-            form.password_hash.data = ''
-            form.password_hash2.data = ''
             flash("Student Added Successfully")
     
     students = StudentModel.find_all()
@@ -71,12 +66,14 @@ def update(personal_id_number):
      form = StudentForm()
      name = None
      student_to_update = StudentModel.query.get_or_404(personal_id_number)
+     classes = ClassModel.find_all()
+     form.class_id.choices = [class_.class_id for class_ in classes]
      if request.method == "POST":
           student = StudentModel.find_by_id(request.form['personal_id_number'])
           if student is None or request.form['personal_id_number'] == student_to_update.personal_id_number:
                student_to_update.name = request.form['name']
                student_to_update.surname = request.form['surname']
-               student_to_update.class_ = request.form['class_']
+               student_to_update.class_id = request.form['class_id']
                student_to_update.personal_id_number = request.form['personal_id_number']
                try:
                     db.session.commit()
@@ -111,9 +108,9 @@ def delete(personal_id_number):
           flash("Student could not be deleted") 
           return render_template("students.html",students=students)  
 
-@app.route("/students")
-def students():
-     students = StudentModel.find_all()
+@app.route("/students/<string:class_id>")
+def students(class_id):
+     students = StudentModel.find_by_class(class_id)
      return render_template("students.html", students=students)
 
 @app.route("/class/add", methods=["GET", "POST"])
@@ -133,7 +130,31 @@ def add_class():
 
      return render_template("add_class.html", class_id=class_id, form=form, classes=classes)
 
+@app.route("/class/<string:class_id>")
+def class_(class_id):
+     class_ = ClassModel.query.get_or_404(class_id)
+     classes = ClassModel.find_all()
+     students = StudentModel.find_by_class(class_id)
+     return render_template('class.html', class_ = class_, classes=classes, students=students)
 
+@app.route("/class/<string:class_id>/student/add", methods=['GET', 'POST'])
+def add_student_to_class(class_id):
+     name = None
+     form = StudentForm()
+     form.class_id.choices = [class_id]
+     if form.validate_on_submit():
+        student = StudentModel.find_by_id(form.personal_id_number.data)
+        if student is None:
+            student = StudentModel(form.personal_id_number.data, form.name.data, form.surname.data, form.class_id.data)
+            student.save_to_db()
+            name = form.name.data
+            form.name.data = ''
+            form.surname.data= ''
+            form.class_id.data = ''
+            flash("Student Added Successfully")
+     class_ = ClassModel.query.get_or_404(class_id)
+     students = StudentModel.find_by_class(class_id)               
+     return render_template("add_student_toclass.html",form = form, name= name,class_ = class_, students = students)
 
 
 if __name__ == '__main__':
