@@ -20,7 +20,7 @@
       background-color: white;
       border: none;
       color: #111013; 
-      font-size: 25px;
+      font-size: 30px;
       cursor: pointer;
       transition: 0.3s;
     }
@@ -36,7 +36,7 @@
         width: 250px;
         height: 50px;
         margin-bottom: 30px;
-        padding-left :40px;
+        padding-left :20px;
     }
 
     #card:hover {
@@ -60,10 +60,16 @@
 
 <h1>{{class_.class_id}}</h1>
 	<br/>
-    {%for student in students%}
+    {%for student in class_.students%}
     <a href="{{url_for('update', personal_id_number=student.personal_id_number)}}"> <div id="card">
         <div id = "class_container">
-        <h5>{{student.name}}</h5>
+            <table>
+            <tr>
+                <td style="font-weight: bold;">{{student.name|capitalize}}</td>
+                <td style="font-weight: bold;"> </td>
+                <td style="font-weight: bold;">{{student.surname|capitalize}}</td>
+            </tr>
+             </table>
         </div>
         </div></a>
     {%endfor%}

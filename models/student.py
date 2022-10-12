@@ -7,8 +7,9 @@ class StudentModel(db.Model):
     personal_id_number = db.Column(db.String(11), nullable=False, primary_key=True, autoincrement=False)
     name = db.Column(db.String(80), nullable=False)
     surname = db.Column(db.String(80), nullable=False)
-    class_id = db.Column(db.String(3), db.ForeignKey(ClassModel.class_id))   
-
+    class_id = db.Column(db.String(3), db.ForeignKey('classes.class_id'))  
+    class_ = db.relationship('ClassModel') 
+    
 
 
     def __init__(self, personal_id_number, name, surname, class_id):

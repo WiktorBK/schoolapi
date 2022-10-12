@@ -1,9 +1,5 @@
-from flask_restful import Api, Resource
 from flask import Flask, render_template, make_response, flash, request
 from db import db
-from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired, Length
 from forms import StudentForm, ClassForm
 from flask_migrate import Migrate
 from models.student import StudentModel
@@ -12,7 +8,6 @@ from models.class_ import ClassModel
 
 
 app = Flask(__name__)
-api = Api(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Qwerty1%40@localhost/schoolsystem'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
@@ -152,9 +147,8 @@ def add_student_to_class(class_id):
             form.surname.data= ''
             form.class_id.data = ''
             flash("Student Added Successfully")
-     class_ = ClassModel.query.get_or_404(class_id)
-     students = StudentModel.find_by_class(class_id)               
-     return render_template("add_student_toclass.html",form = form, name= name,class_ = class_, students = students)
+     class_ = ClassModel.query.get_or_404(class_id)           
+     return render_template("add_student_toclass.html",form = form, name= name,class_ = class_)
 
 
 if __name__ == '__main__':

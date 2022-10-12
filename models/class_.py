@@ -4,8 +4,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 class ClassModel(db.Model):
     __tablename__ = 'classes'
     class_id = db.Column(db.String(3), primary_key=True)
-    students = db.relationship('StudentModel', backref='student')
-
+    students = db.relationship('StudentModel', backref='student', lazy='dynamic')
+  
     @classmethod
     def find_by_id(cls, class_id):
         return cls.query.filter_by(class_id=class_id).first()
