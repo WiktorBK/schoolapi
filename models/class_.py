@@ -23,4 +23,4 @@ class ClassModel(db.Model):
         db.session.commit()
     def delete_from_db(self):
         db.session.delete(self)
-        db.session.commit()
+        db.session.commit()    

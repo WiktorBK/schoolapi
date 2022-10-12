@@ -137,6 +137,7 @@ def add_student_to_class(class_id):
      name = None
      form = StudentForm()
      form.class_id.choices = [class_id]
+     class_ = ClassModel.query.get_or_404(class_id)    
      if form.validate_on_submit():
         student = StudentModel.find_by_id(form.personal_id_number.data)
         if student is None:
@@ -147,7 +148,8 @@ def add_student_to_class(class_id):
             form.surname.data= ''
             form.class_id.data = ''
             flash("Student Added Successfully")
-     class_ = ClassModel.query.get_or_404(class_id)           
+            students = StudentModel.find_by_class(class_id)
+            return render_template("class.html",form = form, name= name, class_ = class_, students = students)       
      return render_template("add_student_toclass.html",form = form, name= name,class_ = class_)
 
 
