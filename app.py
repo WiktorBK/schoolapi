@@ -1,11 +1,12 @@
-from flask import Flask, render_template, make_response, flash, request
+from flask import Flask, render_template, make_response, flash, request, redirect, url_for
 from db import db
-from forms import StudentForm, ClassForm
+from forms import StudentForm, ClassForm, LoginForm, RegisterForm
 from flask_migrate import Migrate
 from models.student import StudentModel
 from werkzeug.security import generate_password_hash, check_password_hash
 from models.class_ import ClassModel
-
+from models.user import UserModel
+from flask_login import UserMixin, login_user, logout_user, LoginManager, login_required, current_user
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost/schoolsystem'
@@ -19,6 +20,13 @@ def create_tables():
      db.create_all()
 migrate = Migrate(app, db)
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+@login_manager.user_loader
+def load_user(id):
+    return UserModel.query.get(int(id))
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -34,27 +42,60 @@ def home():
 
      return render_template('index.html', classes=classes)
 
-@app.route("/student/add", methods=["GET", "POST"])
-def add_student():
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
     headers = {'Content-Type': 'text/html'}
     name = None
-    form = StudentForm()
-    classes = ClassModel.find_all()
-    form.class_id.choices = [class_.class_id for class_ in classes]
+    form = RegisterForm()
     if form.validate_on_submit():
-        student = StudentModel.find_by_id(form.personal_id_number.data)
-        if student is None:
-            student = StudentModel(form.personal_id_number.data, form.name.data, form.surname.data, form.class_id.data)
-            student.save_to_db()
+        user = UserModel.find_by_email(form.email.data)
+        if user is None:
+            hashed_pw = generate_password_hash(form.password.data, "sha256")
+            user = UserModel(form.name.data, form.surname.data, form.email.data, hashed_pw)
+            user.save_to_db()
             name = form.name.data
             form.name.data = ''
             form.surname.data= ''
-            form.class_id.data = ''
-            flash("Student Added Successfully")
+            form.email.data = ''
+            form.password.data = ''
+            form.password_repeat.data = ''
+            flash("Account Created Successfully")
     
-    students = StudentModel.find_all()
-    classes = ClassModel.find_all()
-    return make_response(render_template("add_student.html", form=form,name=name, students=students, classes=classes), 200, headers)
+    users = UserModel.find_all()
+    return make_response(render_template("register.html", form=form,name=name, users=users), 200, headers)
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+     form = LoginForm()
+     if form.validate_on_submit():
+          user = UserModel.find_by_email(form.email.data)
+          if user:
+               if check_password_hash(user.password_hash, form.password.data):
+                    login_user(user)
+                    flash("Login Successfull!")
+                    return redirect(url_for('dashboard'))
+               else:
+                    flash("Wrong Password - Try Again!")
+          else:
+               flash("That User Doesn't Exist - Try Again!")
+
+     return render_template('login.html', form=form)
+
+
+@app.route('/logout', methods=["GET", "POST"])
+@login_required
+def logout():
+     logout_user()
+     flash("You Have Been Logged Out!")
+     return redirect(url_for('login'))
+
+
+
+@app.route("/dashboard", methods=["GET", "POST"])
+@login_required
+def dashboard():
+     return render_template('dashboard.html')
 
 @app.route("/update/<string:personal_id_number>", methods=['GET', 'POST'])
 def update(personal_id_number):
@@ -141,7 +182,7 @@ def add_student_to_class(class_id):
      if form.validate_on_submit():
         student = StudentModel.find_by_id(form.personal_id_number.data)
         if student is None:
-            student = StudentModel(form.personal_id_number.data, form.name.data, form.surname.data, form.class_id.data)
+            student = StudentModel(form.personal_id_number.data, form.name.data, form.surname.data, form.email.data, form.class_id.data)
             student.save_to_db()
             name = form.name.data
             form.name.data = ''
@@ -151,6 +192,7 @@ def add_student_to_class(class_id):
             students = StudentModel.find_by_class(class_id)
             return render_template("class.html",form = form, name= name, class_ = class_, students = students)       
      return render_template("add_student_toclass.html",form = form, name= name,class_ = class_)
+
 
 
 if __name__ == '__main__':

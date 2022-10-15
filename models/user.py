@@ -1,20 +1,16 @@
-from tabnanny import check
 from db import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from models.class_ import ClassModel
 from flask_login import UserMixin, login_user, logout_user, LoginManager, login_required, current_user
 
-class StudentModel(db.Model, UserMixin):
-    __tablename__ = 'students'
-    personal_id_number = db.Column(db.String(11), nullable=False, primary_key=True, autoincrement=False)
+class UserModel(db.Model, UserMixin):
+    __tablename__ = 'users'
+    user_id = db.Column(db.Integer, primary_key = True)
     email = db.Column(db.String(80), nullable=False, unique=True)
     name = db.Column(db.String(80), nullable=False)
     surname = db.Column(db.String(80), nullable=False)
-    class_id = db.Column(db.String(3), db.ForeignKey('classes.class_id'))  
-    class_ = db.relationship('ClassModel') 
-    password_hash = db.Column(db.String(128))
-
-
+    password_hash = db.Column(db.String(80))
+    
     @property
     def password(self):  
         raise AttributeError('password is not a readable attribute!')
@@ -26,22 +22,15 @@ class StudentModel(db.Model, UserMixin):
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-
-    def __init__(self, personal_id_number, name, surname, email, class_id, password_hash):
-        self.personal_id_number = personal_id_number
+    def __init__(self, name, surname, email, password_hash):
         self.name = name
         self.surname = surname
-        self.class_id = class_id
         self.email = email
         self.password_hash = password_hash
-
-    def json(self):
-        return {"personal_id_number": self.personal_id_number,
-                "name": self.name,
-                "surname": self.surname,
-                "class": self.class_
-                }
-                
+        
+    def get_id(self):
+           return (self.user_id)
+           
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
@@ -51,10 +40,13 @@ class StudentModel(db.Model, UserMixin):
     @classmethod
     def find_all(cls):
         return cls.query.order_by(cls.surname)
+
+    
     @classmethod
-    def find_by_id(cls, personal_id_number):
-        return cls.query.filter_by(personal_id_number=personal_id_number).first()
+    def find_by_email(cls, email):
+        return cls.query.filter_by(email=email).first()
+
+    @classmethod
+    def find_by_id(cls, user_id):
+        return cls.query.filter_by(user_id=user_id).first()
      
-    @classmethod 
-    def find_by_class(cls, class_id):
-        return cls.query.filter_by(class_id=class_id).order_by(cls.surname)
