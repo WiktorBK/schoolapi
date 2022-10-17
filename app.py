@@ -1,6 +1,6 @@
 from flask import Flask, render_template, make_response, flash, request, redirect, url_for
 from db import db
-from forms import StudentForm, ClassForm, LoginForm, RegisterForm
+from forms import StudentForm, ClassForm, LoginForm, RegisterForm, ApplicationForm
 from flask_migrate import Migrate
 from models.student import StudentModel
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -208,6 +208,13 @@ def add_student_to_class(class_id):
             return render_template("class.html",form = form, name= name, class_ = class_, students = students)       
      return render_template("add_student_toclass.html",form = form, name= name,class_ = class_)
 
+
+@app.route("/application", methods=["GET", "POST"])
+@login_required
+def application():
+     form = ApplicationForm()
+
+     return render_template('application.html', form=form)
 
 
 if __name__ == '__main__':
