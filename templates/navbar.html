@@ -6,18 +6,52 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          {% if current_user.is_authenticated %}
+
+
+          {% if current_user.user_id == 7 %}
           <li class="nav-item">
             <a class="nav-link" aria-current="page" href="{{url_for('home')}}">Classes</a>
           </li>
+          {% endif %}
+          {%endif%}
         </ul>
-          <a href="{{url_for('login')}}">
-          <button class="btn btn-outline-secondary"  type="submit">Login</button>
-          </a>
-          <li class="nav-item">
-          </li>
-          <a href="{{url_for('register')}}">
-            <button class="btn btn-outline-secondary" type="submit">Register</button>
-            </a>
+            {% if current_user.is_authenticated %}
+            {% if current_user.user_id == 7 %}
+            <!-- Admin Navbar -->
+            <a href="{{url_for('admin')}}">
+              <button class="btn btn-outline-secondary"  type="submit">Admin</button>
+              </a>
+              <li class="nav-item">
+              </li>
+              <a href="{{url_for('logout')}}">
+                <button class="btn btn-outline-secondary"  type="submit">Logout</button>
+                </a>
+
+            {%else%}
+                <!-- Logged User Navbar -->
+              <a href="{{url_for('dashboard')}}">
+                <button class="btn btn-outline-secondary"  type="submit">Profile</button>
+                </a>
+                <li class="nav-item">
+                </li>
+                <a href="{{url_for('logout')}}">
+                  <button class="btn btn-outline-secondary"  type="submit">Logout</button>
+                  </a>
+
+              {%endif%}
+            {% else %}
+                  <!-- Navbar -->
+              <a href="{{url_for('login')}}">
+                <button class="btn btn-outline-secondary"  type="submit">Login</button>
+                </a>
+                <li class="nav-item">
+                </li>
+                <a href="{{url_for('register')}}">
+                  <button class="btn btn-outline-secondary" type="submit">Register</button>
+                  </a>  
+
+              {%endif%}
 
       </div>
     </div>

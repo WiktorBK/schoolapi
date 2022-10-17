@@ -24,6 +24,13 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+
+def isadmin(user_id):
+     if user_id == 7:
+          return True
+     else:
+          return False
+
 @login_manager.user_loader
 def load_user(id):
     return UserModel.query.get(int(id))
@@ -35,6 +42,15 @@ def page_not_found(e):
 def internal_server_error(e):
      return render_template("500.html"), 500
 
+
+@app.route("/admin")
+@login_required
+def admin():
+     user_id = current_user.user_id
+     if isadmin(user_id):
+          return render_template('admin.html')
+     else:
+          return {"message": "access denied"}
 
 @app.route("/")
 def home():
@@ -89,7 +105,6 @@ def logout():
      logout_user()
      flash("You Have Been Logged Out!")
      return redirect(url_for('login'))
-
 
 
 @app.route("/dashboard", methods=["GET", "POST"])
