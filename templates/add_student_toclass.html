@@ -42,12 +42,12 @@ a:hover {color: black;}
 
 
 <br/>
-<h1>{{class_.class_id}}</h1>
+<h1>{{field.field}}</h1>
 <br/>
 <div class="shadow  p-3 mb-5 bg-body rounded">
 <h4>Add Student</h4>
 <br/>
-<form method="POST" action="{{ url_for('add_student_to_class', class_id = class_.class_id)}}">
+<form method="POST" action="{{ url_for('add_student_to_class', field_id = field.field_id)}}">
     {{ form.hidden_tag()}}
 
 
@@ -61,11 +61,16 @@ a:hover {color: black;}
     {{ form.surname(
         class="form-control")}}
     <br/>
-        {{ form.class_id.label(
+        {{ form.field_name.label(
             class="form-label")}}
-        {{ form.class_id(
-            class="form-control", value="")}}
+        {{ form.field_name(
+            class="form-control")}}
     <br/>
+    {{ form.field_form.label(
+        class="form-label")}}
+    {{ form.field_form(
+        class="form-control")}}
+<br/>
     {{ form.personal_id_number.label(
         class="form-label")}}
     {{ form.personal_id_number(
@@ -91,12 +96,12 @@ a:hover {color: black;}
 </tr>
     </thead>
 <tbody class="table table-group-divider">
-{%for student in class_.students%}
+{%for student in field.students%}
 <tr>
 <td WIDTH=200><a href="{{url_for('update', personal_id_number=student.personal_id_number)}}">{{student.name|capitalize}}</a></td> 
 <td WIDTH=200>{{student.surname|capitalize}}</td> 
 <td WIDTH=200>{{student.personal_id_number}}</td> 
-<td WIDTH=200>{{student.class_id}}</td>
+<td WIDTH=200>{{field.field}}</td>
 <td WIDTH=50 id="delete"><a href="{{url_for('delete', personal_id_number=student.personal_id_number)}}">X</a></td>
 </tr>
 {%endfor%}

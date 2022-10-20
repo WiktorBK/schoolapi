@@ -1,12 +1,13 @@
 from flask import Flask, render_template, make_response, flash, request, redirect, url_for
 from db import db
-from forms import StudentForm, ClassForm, LoginForm, RegisterForm, ApplicationForm
+from forms import StudentForm, FieldForm, LoginForm, RegisterForm, ApplicationForm
 from flask_migrate import Migrate
 from models.student import StudentModel
 from werkzeug.security import generate_password_hash, check_password_hash
-from models.class_ import ClassModel
+from models.fields import FieldModel
 from models.user import UserModel
 from flask_login import UserMixin, login_user, logout_user, LoginManager, login_required, current_user
+from models.application import ApplicationModel
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost/schoolsystem'
@@ -26,7 +27,7 @@ login_manager.login_view = 'login'
 
 
 def isadmin(user_id):
-     if user_id == 7:
+     if current_user.role == 'admin':
           return True
      else:
           return False
@@ -54,9 +55,9 @@ def admin():
 
 @app.route("/")
 def home():
-     classes = ClassModel.find_all()
+     fields = FieldModel.find_all()
 
-     return render_template('index.html', classes=classes)
+     return render_template('index.html', fields=fields)
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -76,7 +77,12 @@ def register():
             form.email.data = ''
             form.password.data = ''
             form.password_repeat.data = ''
-            flash("Account Created Successfully")
+            flash("Account Created Successfully. Logged in automatically")
+            login_user(user)
+            if isadmin(current_user.user_id):
+               return redirect(url_for('admin'))
+            else:
+               return redirect(url_for('dashboard'))
     
     users = UserModel.find_all()
     return make_response(render_template("register.html", form=form,name=name, users=users), 200, headers)
@@ -90,7 +96,10 @@ def login():
                if check_password_hash(user.password_hash, form.password.data):
                     login_user(user)
                     flash("Login Successfull!")
-                    return redirect(url_for('dashboard'))
+                    if isadmin(current_user.user_id):
+                         return redirect(url_for('admin'))
+                    else:
+                         return redirect(url_for('dashboard'))
                else:
                     flash("Wrong Password - Try Again!")
           else:
@@ -117,14 +126,16 @@ def update(personal_id_number):
      form = StudentForm()
      name = None
      student_to_update = StudentModel.query.get_or_404(personal_id_number)
-     classes = ClassModel.find_all()
-     form.class_id.choices = [class_.class_id for class_ in classes]
+     fields = FieldModel.find_all()
+     form.field_name.choices = [field.field for field in fields]
+     form.field_form.choices = ["stacjonarne", "niestacjonarne"]
      if request.method == "POST":
           student = StudentModel.find_by_id(request.form['personal_id_number'])
           if student is None or request.form['personal_id_number'] == student_to_update.personal_id_number:
                student_to_update.name = request.form['name']
                student_to_update.surname = request.form['surname']
-               student_to_update.class_id = request.form['class_id']
+               student_to_update.field_name = request.form['field_name']
+               student_to_update.field_form = request.form['field_form']
                student_to_update.personal_id_number = request.form['personal_id_number']
                try:
                     db.session.commit()
@@ -148,73 +159,116 @@ def update(personal_id_number):
 @app.route("/delete/<string:personal_id_number>")
 def delete(personal_id_number):
      student_to_delete = StudentModel.query.get_or_404(personal_id_number)
+     field = FieldModel.find_field(student_to_delete.field_id)
+     fields = FieldModel.find_all()
      name = None
      form = StudentForm()
      try:
           student_to_delete.delete_from_db()
           students = StudentModel.find_all()
           flash("Student Deleted Successfully")
-          return render_template("students.html",students=students)
+          return render_template("field.html",students=students, field=field, fields=fields)
      except:
           flash("Student could not be deleted") 
-          return render_template("students.html",students=students)  
+          return render_template("field.html",students=students,  field=field, fields=fields)  
 
-@app.route("/students/<string:class_id>")
-def students(class_id):
-     students = StudentModel.find_by_class(class_id)
-     return render_template("students.html", students=students)
 
-@app.route("/class/add", methods=["GET", "POST"])
-def add_class():
-     form = ClassForm()
-     class_id = None
+@app.route("/field/add", methods=["GET", "POST"])
+def add_field():
+     form = FieldForm()
+     field_name = None
+     form.form.choices = ["stacjonarne", "niestacjonarne"]
      if form.validate_on_submit():
-        class_ = ClassModel.find_by_id(form.class_id.data)
-        if class_ is None:
-            class_id = form.class_id.data
-            class_ = ClassModel(form.class_id.data)
-            class_.save_to_db()
-            form.class_id.data = ''
-            flash("Class Added Successfully")
+        field = FieldModel.find_by_name(form.field.data, form.form.data)
+        if field is None:
+            field_name = form.field.data
+            field = FieldModel(form.field.data, form.form.data)
+            field.save_to_db()
+            form.field.data = ''
+            flash("Field Added Successfully")
     
-     classes = ClassModel.find_all()
+     fields = FieldModel.find_all()
 
-     return render_template("add_class.html", class_id=class_id, form=form, classes=classes)
+     return render_template("add_field.html", field=field_name, form=form, fields=fields)
 
-@app.route("/class/<string:class_id>")
-def class_(class_id):
-     class_ = ClassModel.query.get_or_404(class_id)
-     classes = ClassModel.find_all()
-     students = StudentModel.find_by_class(class_id)
-     return render_template('class.html', class_ = class_, classes=classes, students=students)
+@app.route("/field/<int:field_id>", methods=["GET", "POST"])
+def field(field_id):
+     field = FieldModel.query.get_or_404(field_id)
+     fields = FieldModel.find_all()
+     students = StudentModel.find_by_field(field_id)
+     return render_template('field.html', field = field, fields=fields, students=students)
+     
+@app.route("/fields")
+def fields():
+     fields = FieldModel.find_all()
+     return render_template("fields.html", fields = fields)
 
-@app.route("/class/<string:class_id>/student/add", methods=['GET', 'POST'])
-def add_student_to_class(class_id):
+@app.route("/field/<int:field_id>/student/add", methods=['GET', 'POST'])
+def add_student_to_class(field_id):
      name = None
      form = StudentForm()
-     form.class_id.choices = [class_id]
-     class_ = ClassModel.query.get_or_404(class_id)    
+     field = FieldModel.query.get_or_404(field_id)    
+     form.field_name.choices = [field.field]
+     form.field_form.choices = [field.form]
      if form.validate_on_submit():
         student = StudentModel.find_by_id(form.personal_id_number.data)
         if student is None:
-            student = StudentModel(form.personal_id_number.data, form.name.data, form.surname.data, form.email.data, form.class_id.data)
+            student = StudentModel(form.personal_id_number.data, form.name.data, form.surname.data, field.field_id)
             student.save_to_db()
-            name = form.name.data
+            name= form.name.data
             form.name.data = ''
             form.surname.data= ''
-            form.class_id.data = ''
+            form.field_name.data = ''
+            form.field_form.data = ''
             flash("Student Added Successfully")
-            students = StudentModel.find_by_class(class_id)
-            return render_template("class.html",form = form, name= name, class_ = class_, students = students)       
-     return render_template("add_student_toclass.html",form = form, name= name,class_ = class_)
+            students = StudentModel.find_by_field(field_id)
+            return render_template("field.html",form = form, name= name, field = field, students = students)       
+     return render_template("add_student_toclass.html",form = form, name= name,field = field)
 
 
-@app.route("/application", methods=["GET", "POST"])
+@app.route("/apply", methods=["GET", "POST"])
 @login_required
 def application():
      form = ApplicationForm()
+     name = None
+     fields = FieldModel.find_all_in_form("stacjonarne")
+     form.field_of_study.choices = [field.field for field in fields]
+     form.form_of_study.choices = ["stacjonarne", "niestacjonarne"]
+     already_sent = ApplicationModel.already_sent(current_user.user_id)
+     if already_sent == False:
+          if form.validate_on_submit():
+               already_sent = True
+               application = ApplicationModel(user_id = current_user.user_id, 
+               first_name = form.first_name.data,
+               second_name = form.second_name.data,
+               last_name = form.last_name.data,
+               email = form.email.data,
+               phone_number = form.phone_number.data,
+               address1 = form.street_name.data,
+               address2 = form.street_number.data,
+               city = form.city.data,
+               zip_code = form.zip_code.data,
+               form_of_study = form.form_of_study.data,
+               field_of_study = form.field_of_study.data,
+               )
 
-     return render_template('application.html', form=form)
+               application.save_to_db()
+               flash("Application has been sent. Check the details in your ")
+               
+               form.first_name.data = ''
+               form.second_name.data= ''
+               form.last_name.data= ''
+               form.email.data= ''
+               form.phone_number.data= ''
+               form.street_name.data= ''
+               form.street_number.data= ''
+               form.city.data= ''
+               form.zip_code.data= ''
+               form.form_of_study.data= ''
+               form.field_of_study.data= ''
+          
+            
+     return render_template('application.html', form=form, already_sent=already_sent)
 
 
 if __name__ == '__main__':

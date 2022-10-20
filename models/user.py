@@ -1,6 +1,7 @@
 from db import db
 from werkzeug.security import generate_password_hash, check_password_hash
-from models.class_ import ClassModel
+from models.fields import FieldModel
+from models.application import ApplicationModel
 from flask_login import UserMixin, login_user, logout_user, LoginManager, login_required, current_user
 
 class UserModel(db.Model, UserMixin):
@@ -10,6 +11,8 @@ class UserModel(db.Model, UserMixin):
     name = db.Column(db.String(80), nullable=False)
     surname = db.Column(db.String(80), nullable=False)
     password_hash = db.Column(db.String(80))
+    role = db.Column(db.String(80), default = 'user')
+    applications = db.relationship('ApplicationModel', backref='application', lazy='dynamic')
     
     @property
     def password(self):  

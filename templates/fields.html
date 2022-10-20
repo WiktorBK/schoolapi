@@ -20,7 +20,7 @@
       background-color: white;
       border: none;
       color: #111013; 
-      font-size: 30px;
+      font-size: 25px;
       cursor: pointer;
       transition: 0.3s;
     }
@@ -36,12 +36,13 @@
         width: 250px;
         height: 50px;
         margin-bottom: 30px;
-        padding-left :20px;
+        padding-left :40px;
     }
 
     #card:hover {
         box-shadow: 0 12px 20px 0 rgba(0,0,0,0.2);
         cursor: pointer;
+        padding-left: 30px;
     }
 
     #card:ac {
@@ -51,42 +52,22 @@
     #class_container {
         padding: 12px;
     }
-    h5{
-        font-size:16px;
-    }
 </style>
 
-{% for message in get_flashed_messages() %}
-	
-	<div class="alert alert-success alert-dismissible fade show" role="alert">
-	  {{ message }}
-	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-	</div>
 
-	
-{% endfor %}
-
-<h1>{{class_.class_id}}</h1>
+<h1>Fields</h1>
 	<br/>
-    {%for student in class_.students%}
-    <a href="{{url_for('update', personal_id_number=student.personal_id_number)}}"> <div id="card">
+
+    {%for field in fields%}
+    <a href="{{url_for('field', field_id=field.field_id)}}"> <div id="card">
         <div id = "class_container">
-            <table>
-            <tr>
-                <td style="font-weight: bold;">{{student.name|capitalize}}</td>
-                <td style="font-weight: bold;"> </td>
-                <td style="font-weight: bold;">{{student.surname|capitalize}}</td>
-            </tr>
-             </table>
+        <h5>{{field.field}}</h5>
         </div>
         </div></a>
+
     {%endfor%}
-    <a href="{{url_for('add_student_to_class', class_id=class_.class_id)}}" id="add" class="btn btn-primary"><i class="fa fa-plus-square"></i></a>
 
-
- 
-
-
+<a href="{{url_for('add_field')}}" id="add" class="btn btn-primary"><i class="fa fa-plus-square"></i></a>
 
 
 {% endblock %}

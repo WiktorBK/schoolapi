@@ -3,21 +3,33 @@
 {% block content %}
 {% for message in get_flashed_messages() %}
 	
-	<div class="alert alert-warning alert-dismissible fade show" role="alert">
-	  {{ message }}
-	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-	</div>
+<div class="alert alert-success" role="alert">
+    {{message}} <a href="{{url_for('dashboard')}}" class="alert-link">Dashboard</a>.
+  </div>
 
 	
 {% endfor %}
 
+
+{%if already_sent%}
+<div class="alert alert-success" role="alert">
+    <h4 class="alert-heading">Application Sent!</h4>
+    <p>Your application is now being reviewed. Whenever it's ready you will see the results in your <a href="{{url_for('dashboard')}}" class="alert-link">Dashboard</a>.
+    </p>
+    <hr>
+    <p class="mb-0">Click <a href="{{url_for('dashboard')}}" class="alert-link">here</a> to see the details of your application</p>
+  </div>
+
+
+{%else%}
 <h1> Application Form </h1>
 
 <br/>
 <div class="shadow-sm p-3 mb-5 bg-body rounded">
     <h4>Adress</h4>
     <br/>
-<form  method="POST">
+<form  method="POST" action="{{url_for('application')}}">
+    {{ form.hidden_tag() }}
     <div class="row">
         <div class="col">
         {{ form.first_name.label(
@@ -39,10 +51,22 @@
     </div>
     </div>
     <br/>
-    {{ form.email.label(
-        class="form-label")}}
-    {{ form.email(
-        class="form-control")}}
+    <div class="row">
+        <div class="col">        
+            {{ form.email.label(
+                class="form-label")}}
+            {{ form.email(
+                class="form-control")}}
+        </div>
+        <div class="col">        
+            {{ form.phone_number.label(
+            class="form-label")}}
+            {{ form.phone_number(
+            class="form-control")}}
+        </div>
+
+    </div>
+
         <br/>
     {{ form.street_name.label(
         class="form-label")}}
@@ -86,6 +110,6 @@
 
 </form> 
 </div>
-
+{%endif%}
 
 {% endblock %}

@@ -21,13 +21,13 @@
         <th scope="col">First Name</th>
         <th scope="col">Last Name</th>
         <th scope="col">Personal ID Number</th>
-        <th scope="col">Class</th>
+        <th scope="col">Field</th>
     </tr>
         </thead>
     <tbody class="table table-group-divider">
     {%for student in students%}
     <tr>
-    <td WIDTH=200>{{student.name|capitalize}}</td> <td WIDTH=200>{{student.surname|capitalize}}</td> <td WIDTH=200>{{student.personal_id_number}}</td> <td WIDTH=200>{{student.class_id}}</td>
+    <td WIDTH=200>{{student.name|capitalize}}</td> <td WIDTH=200>{{student.surname|capitalize}}</td> <td WIDTH=200>{{student.personal_id_number}}</td> <td WIDTH=200>{{student.field_id}}</td>
     </tr>
     {%endfor%}
     </tbody>
@@ -53,10 +53,15 @@
     {{ form.surname(
         class="form-control", value=student_to_update.surname)}}
     <br/>
-    {{ form.class_id.label(
+    {{ form.field_name.label(
         class="form-label")}}
-    {{ form.class_id(
-        class="form-control", value=student_to_update.class_id)}}
+    {{ form.field_name(
+        class="form-control")}}
+    <br/>
+    {{ form.field_form.label(
+        class="form-label")}}
+    {{ form.field_form(
+        class="form-control")}}
     <br/>
     {{ form.personal_id_number.label(
         class="form-label")}}

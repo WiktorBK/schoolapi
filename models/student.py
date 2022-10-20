@@ -1,39 +1,25 @@
-from tabnanny import check
+
 from db import db
-from werkzeug.security import generate_password_hash, check_password_hash
-from models.class_ import ClassModel
+from models.fields import FieldModel
 from flask_login import UserMixin, login_user, logout_user, LoginManager, login_required, current_user
 
 class StudentModel(db.Model, UserMixin):
     __tablename__ = 'students'
     personal_id_number = db.Column(db.String(11), nullable=False, primary_key=True, autoincrement=False)
-    email = db.Column(db.String(80), nullable=False, unique=True)
     name = db.Column(db.String(80), nullable=False)
     surname = db.Column(db.String(80), nullable=False)
-    class_id = db.Column(db.String(3), db.ForeignKey('classes.class_id'))  
-    class_ = db.relationship('ClassModel') 
-    password_hash = db.Column(db.String(128))
+    field_id = db.Column(db.Integer, db.ForeignKey('fields.field_id'))  
+    field = db.relationship('FieldModel') 
 
 
-    @property
-    def password(self):  
-        raise AttributeError('password is not a readable attribute!')
-
-    @password.setter
-    def password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def verify_password(self, password):
-        return check_password_hash(self.password_hash, password)
 
 
-    def __init__(self, personal_id_number, name, surname, email, class_id, password_hash):
+    def __init__(self, personal_id_number, name, surname, field_id):
         self.personal_id_number = personal_id_number
         self.name = name
         self.surname = surname
-        self.class_id = class_id
-        self.email = email
-        self.password_hash = password_hash
+        self.field_id = field_id
+
 
     def json(self):
         return {"personal_id_number": self.personal_id_number,
@@ -56,5 +42,5 @@ class StudentModel(db.Model, UserMixin):
         return cls.query.filter_by(personal_id_number=personal_id_number).first()
      
     @classmethod 
-    def find_by_class(cls, class_id):
-        return cls.query.filter_by(class_id=class_id).order_by(cls.surname)
+    def find_by_field(cls, field_id):
+        return cls.query.filter_by(field_id=field_id).order_by(cls.surname)

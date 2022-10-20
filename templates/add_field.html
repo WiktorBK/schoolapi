@@ -38,40 +38,47 @@ a:hover {color: black;}
 {% endfor %}
 
 
-{% if class_id %}
-	<h1>Class Added!</h1>
+{% if field %}
+	<h1>Field Added!</h1>
 	<br/><br/>
     <table class="table">
         <thead>
     <tr>
 
-        <th scope="col">Class</th>
+        <th scope="col">Field</th>
+        <th scope="col">Form</th>
     </tr>
         </thead>
     <tbody class="table table-group-divider">
-    {%for class_ in classes%}
+    {%for field in fields%}
     <tr>
-    <td WIDTH=200>{{class_.class_id}}</td>
+    <td WIDTH=200>{{field.field}}</td>
+    <td WIDTH=200>{{field.form}}</td>
 
 </tr>       
     {%endfor%}
     </tbody>
     </table>
-    <a href="{{url_for('add_class')}}" id="add" class="btn btn-primary"><i class="fa fa-plus-square"></i></a>
+    <a href="{{url_for('add_field')}}" id="add" class="btn btn-primary"><i class="fa fa-plus-square"></i></a>
 
 {%else%}
 
 <br/>
 <div class="shadow  p-3 mb-5 bg-body rounded">
-<h4> Add Class </h4>
+<h4> Add Field </h4>
 <br/>
-<form method="POST" action="{{ url_for('add_class')}}">
+<form method="POST" action="{{ url_for('add_field')}}">
     {{ form.hidden_tag()}}
 
 
-    {{ form.class_id.label(
+    {{ form.field.label(
         class="form-label")}}
-    {{ form.class_id(
+    {{ form.field(
+        class="form-control")}}
+    <br/>
+    {{ form.form.label(
+        class="form-label")}}
+    {{ form.form(
         class="form-control")}}
     <br/>
 
@@ -82,18 +89,20 @@ a:hover {color: black;}
 
 <br/><br/>
 
-<h1> Classes </h1>
+<h1> Fields </h1>
 <table class="table">
     <thead>
 <tr>
-    <th scope="col">Class</th>
+    <th scope="col">Field</th>
+    <th scope="col">Form</th>
 
 </tr>
     </thead>
 <tbody class="table table-group-divider">
-{%for class_ in classes%}
+{%for field in fields%}
 <tr>
-<td WIDTH=200>{{class_.class_id}}</td>
+<td WIDTH=200>{{field.field}}</td>
+<td WIDTH=200>{{field.form}}</td>
 </tr>
 {%endfor%}
 </tbody>
