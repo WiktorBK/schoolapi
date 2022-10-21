@@ -1,15 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% for message in get_flashed_messages() %}
-	
-<div class="alert alert-success" role="alert">
-    {{message}} <a href="{{url_for('dashboard')}}" class="alert-link">Dashboard</a>.
-  </div>
-
-	
-{% endfor %}
-
 
 {%if already_sent%}
 <div class="alert alert-success" role="alert">

@@ -17,7 +17,7 @@ class ApplicationModel(db.Model):
     form_of_study = db.Column(db.String(80))
     field_of_study = db.Column(db.String(80))
     phone_number = db.Column(db.String(80))
-    # sent = db.Column(db.DateTime, default=datetime.utcnow)
+    date = db.Column(db.DateTime, default=datetime.utcnow)
     status = db.Column(db.String(80), default="to_review")
     user = db.relationship('UserModel')  
 
@@ -29,8 +29,8 @@ class ApplicationModel(db.Model):
         db.session.commit()
 
     @classmethod
-    def find_all(cls):
-        return cls.query.order_by(cls.application_id)
+    def find_all_active(cls):
+        return cls.query.filter_by(status="to_review").order_by(cls.application_id)
 
     @classmethod
     def already_sent(cls, user_id):

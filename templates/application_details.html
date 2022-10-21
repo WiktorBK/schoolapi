@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% for message in get_flashed_messages() %}
+	
+	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+	  {{ message }}
+	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+
+	
+{% endfor %}
+<button type="button" class="btn btn-dark" onclick="history.back()">Back</button>
+<br/>
+<br/>
+
+<br/>
+
+<h2>Application Details</h2>
+	<br/>
+
+	<div class="card">
+  <div class="card-header">
+    {{ application.first_name|capitalize }} {{ application.last_name|capitalize }}
+  </div>
+  <div class="card-body">
+   
+    <p class="card-text">
+
+<div class="container">
+	<div class="row">
+		<div class="col-8">
+
+    <strong>Frist Name:</strong>
+	{{ application.first_name|capitalize }}<br/>
+
+   <strong>Second Name:</strong>
+	{{ application.second_name|capitalize }}<br/>
+
+	<strong>Last Name:</strong>
+	{{ application.last_name|capitalize }}<br/>
+
+    <strong>Phone Number:</strong>
+	{{ application.phone_number }}<br/>
+
+	<strong>Email:</strong>
+	{{ application.email }}<br/>
+
+    <strong>City:</strong>
+	{{ application.city|capitalize }}<br/>
+
+    <strong>Adress:</strong>
+	{{ application.address1|capitalize }} {{ application.address2}}<br/>
+
+    <strong>Zip Code:</strong>
+	{{ application.zip_code }}<br/>
+
+    <strong>Form:</strong>
+	{{ application.form_of_study|capitalize }}<br/>
+    
+    <strong>Field:</strong>
+	{{ application.field_of_study|capitalize }}<br/>
+
+    <strong>Date Sent:</strong>
+	{{ application.date }}<br/>
+
+
+    	
+    </p>
+
+
+
+
+
+{% endblock %}

@@ -8,10 +8,16 @@
 </center>
 <br/>
 <br/>
-<a class="btn btn-warning btn-lg" href="{{url_for('fields')}}">Fields</a>
+<div class="row"> 
+<div class='col col-md-4'> <a class="btn btn-outline-dark btn-lg" href="{{url_for('fields')}}">Fields</a></div>
+<div class='col col-md-4'> <a class="btn btn-outline-dark btn-lg" href="#">Students</a></div>
+<div class='col col-md-4'> <a class="btn btn-outline-dark btn-lg" href="{{url_for('applications')}}">Applications</a></div>
+</div>
+
+
 <br/>
 <br/>
 <br/>
-<a class="btn btn-warning btn-lg" href="#">Students</a>
+
 
 {% endblock %}

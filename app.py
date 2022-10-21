@@ -119,7 +119,8 @@ def logout():
 @app.route("/dashboard", methods=["GET", "POST"])
 @login_required
 def dashboard():
-     return render_template('dashboard.html')
+     application = ApplicationModel.find_by_user(current_user.user_id)
+     return render_template('dashboard.html', application=application)
 
 @app.route("/update/<string:personal_id_number>", methods=['GET', 'POST'])
 def update(personal_id_number):
@@ -270,6 +271,38 @@ def application():
             
      return render_template('application.html', form=form, already_sent=already_sent)
 
+
+@app.route("/applications")
+@login_required
+def applications():
+     if isadmin(current_user.user_id):
+          applications = ApplicationModel.find_all_active()
+          return render_template("show_applications.html", applications = applications)
+     else:
+          return{"message": "access denied"}
+
+@app.route("/application/<int:application_id>/accept")
+def application_accept(application_id):
+     if isadmin(current_user.user_id):
+          pass
+     else:
+          return{"message": "access denied"}
+@app.route("/application/<int:application_id>/decline")
+def application_decline(application_id):
+    if isadmin(current_user.user_id):
+          pass
+    else:
+          return{"message": "access denied"}
+@app.route("/application/<int:application_id>/details")
+def application_details(application_id):
+    if isadmin(current_user.user_id):
+       application = ApplicationModel.find_by_id(application_id)
+    else:
+        application = ApplicationModel.find_by_user(current_user.user_id)
+    if isadmin(current_user.user_id) or application and application_id == application.application_id:
+          return render_template("application_details.html", application=application)
+    else:
+      return{"message": "access denied"}
 
 if __name__ == '__main__':
     app.run(port = 5000, debug=True)

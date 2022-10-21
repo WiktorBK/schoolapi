@@ -75,7 +75,9 @@ a:hover {color: black;}
         class="form-label")}}
     {{ form.personal_id_number(
         class="form-control")}}
-    <br/>
+        {% for err in form.personal_id_number.errors %}
+        <p style="color: rgb(180, 6, 6); font-weight: bold; opacity: 0.8;">{{err}}</p>
+        {% endfor %}
 
     <br/>
     {{ form.submit(class ="btn btn-secondary") }}

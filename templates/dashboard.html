@@ -11,8 +11,43 @@
 	
 {% endfor %}
 
-<h1> Dashboard </h1>
-<br/>
+<h2>Dashboard</h2>
+	<br/>
+
+	<div class="card">
+  <div class="card-header">
+    {{ current_user.name|capitalize }}
+  </div>
+  <div class="card-body">
+   
+    <p class="card-text">
+
+<div class="container">
+	<div class="row">
+		<div class="col-8">
+
+    <strong>Frist Name:</strong>
+	{{ current_user.name|capitalize }}<br/>
+
+	<strong>Last Name:</strong>
+	{{ current_user.surname|capitalize }}<br/>
+
+
+	<strong>Email:</strong>
+	{{ current_user.email }}<br/>
+
+
+    	
+    </p>
+    <a href="#" class="btn btn-primary btn-sm">Update Profile</a>
+
+	{%if application%}
+	<a href="{{url_for('application_details', application_id = application.application_id)}}"  class='btn btn-primary btn-sm'>Application Details</a>
+	{%endif%}
+
+	<a href="{{ url_for('logout')}}" class="btn btn-secondary btn-sm">Logout</a>
+
+
 
 
 

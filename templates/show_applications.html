@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+{% for message in get_flashed_messages() %}
+	
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+	  {{ message }}
+	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+{% endfor %}
+
+<br/>
+<h1> Applications </h1>
+<table class="table">
+    <thead>
+<tr>
+    <th scope="col">First Name</th>
+    <th scope="col">Last Name</th>
+    <th scope="col">Form</th>
+    <th scope="col">Field</th>
+    <th scope="col">Date</th>
+    <th scope="col"></th>
+    <th scope="col"></th>
+    <th scope="col"></th>
+
+</tr>
+    </thead>
+<tbody class="table table-group-divider">
+    {%for application in applications%}
+<tr>
+<td WIDTH=200>{{application.first_name|capitalize}}</td>
+<td WIDTH=200>{{application.last_name|capitalize}}</td>
+<td WIDTH=200>{{application.form_of_study|capitalize}}</td>
+<td WIDTH=200>{{application.field_of_study|capitalize}}</td>
+<td WIDTH=200>{{application.date}}</td>
+<td WIDTH=200><a href="{{url_for('application_details', application_id = application.application_id)}}"><button type="button" class="btn btn-primary">Details</button></a></td>
+<td WIDTH=50><a href="{{url_for('application_accept', application_id = application.application_id)}}"><button type="button" class="btn btn-success ">Accept</button></a></td>
+<td WIDTH=50><a href="{{url_for('application_decline', application_id = application.application_id)}}"><button type="button" class="btn btn-danger ">Decline</button></a></td>
+</tr>
+{%endfor%}
+</tbody>
+</table>
+
+{% endblock %}
