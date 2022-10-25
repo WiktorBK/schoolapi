@@ -55,19 +55,10 @@
 </style>
 
 
-<h1>Overview</h1>
+<h1>HomePage</h1>
 	<br/>
 
-    {%for field in fields%}
-    <a href="{{url_for('field', field_id=field.field_id)}}"> <div id="card">
-        <div id = "class_container">
-        <h5>{{field.field}}</h5>
-        </div>
-        </div></a>
 
-    {%endfor%}
-
-<a href="{{url_for('add_field')}}" id="add" class="btn btn-primary"><i class="fa fa-plus-square"></i></a>
-
+    
 
 {% endblock %}
