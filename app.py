@@ -10,7 +10,7 @@ from flask_login import UserMixin, login_user, logout_user, LoginManager, login_
 from models.application import ApplicationModel
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost/schoolsystem'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost/schoolapi'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['SECRET_KEY'] = "top_secret"
@@ -236,6 +236,7 @@ def application():
      form.field_of_study.choices = [field.field for field in fields]
      form.form_of_study.choices = ["stacjonarne", "niestacjonarne"]
      already_sent = ApplicationModel.already_sent(current_user.user_id)
+     application = ApplicationModel.find_by_user(current_user.user_id)
      if already_sent == False:
           if form.validate_on_submit():
                already_sent = True
@@ -254,7 +255,6 @@ def application():
                )
 
                application.save_to_db()
-               flash("Application has been sent. Check the details in your ")
                
                form.first_name.data = ''
                form.second_name.data= ''
@@ -269,7 +269,7 @@ def application():
                form.field_of_study.data= ''
           
             
-     return render_template('application.html', form=form, already_sent=already_sent)
+     return render_template('application.html', form=form, already_sent=already_sent, application=application)
 
 
 @app.route("/applications")

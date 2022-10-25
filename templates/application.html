@@ -8,7 +8,7 @@
     <p>Your application is now being reviewed. Whenever it's ready you will see the results in your <a href="{{url_for('dashboard')}}" class="alert-link">Dashboard</a>.
     </p>
     <hr>
-    <p class="mb-0">Click <a href="{{url_for('dashboard')}}" class="alert-link">here</a> to see the details of your application</p>
+    <p class="mb-0">Click <a href="{{url_for('application_details', application_id = application.application_id)}}" class="alert-link">here</a> to see the details of your application</p>
   </div>
 
 
@@ -26,7 +26,7 @@
         {{ form.first_name.label(
             class="form-label")}}
         {{ form.first_name(
-            class="form-control")}}
+            class="form-control", value=current_user.name)}}
     </div>  
     <div class="col">
         {{ form.second_name.label(
@@ -38,7 +38,7 @@
         {{ form.last_name.label(
             class="form-label")}}
         {{ form.last_name(
-            class="form-control")}}
+            class="form-control", value=current_user.surname)}}
     </div>
     </div>
     <br/>
@@ -47,7 +47,7 @@
             {{ form.email.label(
                 class="form-label")}}
             {{ form.email(
-                class="form-control")}}
+                class="form-control", value=current_user.email)}}
         </div>
         <div class="col">        
             {{ form.phone_number.label(
