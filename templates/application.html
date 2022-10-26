@@ -87,6 +87,7 @@
     <br/>
     <h4>Other</h4>
     <br/>
+    {{ form.csrf_token }}
     {{ form.form_of_study.label(
         class="form-label")}}
         {{ form.form_of_study(
@@ -100,7 +101,29 @@
     {{ form.submit(class ="btn btn-secondary") }}
 
 </form> 
+<script>
+ var form_select = document.getElementById("form_of_study");
+ var field_select = document.getElementById("field_of_study");
 
+        form_select.onchange = function()  {
+             
+            form = form_select.value;
+            
+            fetch('/field/' + form).then(function(response) {
+
+                response.json().then(function(data) {
+                    var optionHTML = '';
+                    for (var field of data.fields) {
+                        optionHTML += '<option value="' + field.field + '">' + field.name + '</option>';
+                    }
+
+                    field_select.innerHTML = optionHTML;
+                })
+                
+            });
+        }
+
+</script>
 </div>
 {%endif%}
 

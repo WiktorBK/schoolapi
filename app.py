@@ -1,4 +1,4 @@
-from flask import Flask, render_template, make_response, flash, request, redirect, url_for
+from flask import Flask, render_template, make_response, flash, request, redirect, url_for, jsonify
 from db import db
 from forms import StudentForm, FieldForm, LoginForm, RegisterForm, ApplicationForm
 from flask_migrate import Migrate
@@ -185,18 +185,31 @@ def add_field():
           form.form.choices = ["stacjonarne", "niestacjonarne"]
           if form.validate_on_submit():
                field = FieldModel.find_by_name(form.field.data, form.form.data)
-          if field is None:
-            field_name = form.field.data
-            field = FieldModel(form.field.data, form.form.data)
-            field.save_to_db()
-            form.field.data = ''
-            flash("Field Added Successfully")
-    
+               if field is None:
+                    field_name = form.field.data
+                    field = FieldModel(form.field.data, form.form.data)
+                    field.save_to_db()
+                    form.field.data = ''
+                    flash("Field Added Successfully")
+     
           fields = FieldModel.find_all()
 
           return render_template("add_field.html", field=field_name, form=form, fields=fields)
      else:
           return {"message": "access denied"}
+          
+@app.route("/field/<form>") 
+def field_(form):
+     fields = FieldModel.find_all_in_form(form)
+
+     fieldsList = []
+
+     for field in fields:
+          fieldObj = {}
+          fieldObj['name'] = field.field
+          fieldsList.append(fieldObj) 
+
+     return jsonify({'fields':fieldsList})     
 
 @app.route("/field/<int:field_id>", methods=["GET", "POST"])
 @login_required
@@ -250,7 +263,6 @@ def application():
      name = None
      fields = FieldModel.find_all_in_form("stacjonarne")
      form.field_of_study.choices = [field.field for field in fields]
-     form.form_of_study.choices = ["stacjonarne", "niestacjonarne"]
      already_sent = ApplicationModel.already_sent(current_user.user_id)
      application = ApplicationModel.find_by_user(current_user.user_id)
      if already_sent == False:
