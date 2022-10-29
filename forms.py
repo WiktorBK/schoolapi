@@ -40,6 +40,6 @@ class ApplicationForm(FlaskForm):
     street_number = StringField("Adress Line 2", validators=[DataRequired()], render_kw={"placeholder": "Apartment"})
     zip_code = StringField("Zip Code", validators=[DataRequired()], render_kw={"placeholder": "xx-xxx"})
     field_of_study = SelectField("Field Of Study", validators=[DataRequired()], render_kw={"placeholder": "Select"})
-    form_of_study = SelectField("Form Of Study", validators=[DataRequired()], choices=["stacjonarne", "niestacjonarne"], render_kw={"placeholder": "Select"})
+    form_of_study = SelectField("Form Of Study", validators=[DataRequired()], choices=["full-time", "part-time"], render_kw={"placeholder": "Select"})
     submit = SubmitField("Apply")
 

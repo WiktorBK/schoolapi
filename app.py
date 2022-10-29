@@ -131,7 +131,7 @@ def update(personal_id_number):
      student_to_update = StudentModel.query.get_or_404(personal_id_number)
      fields = FieldModel.find_all()
      form.field_name.choices = [field.field for field in fields]
-     form.field_form.choices = ["stacjonarne", "niestacjonarne"]
+     form.field_form.choices = ["full-time", "part-time"]
      if request.method == "POST":
           student = StudentModel.find_by_id(request.form['personal_id_number'])
           if student is None or request.form['personal_id_number'] == student_to_update.personal_id_number:
@@ -182,7 +182,7 @@ def add_field():
      if isadmin(current_user.user_id):
           form = FieldForm()
           field_name = None
-          form.form.choices = ["stacjonarne", "niestacjonarne"]
+          form.form.choices = ["full-time", "part-time"]
           if form.validate_on_submit():
                field = FieldModel.find_by_name(form.field.data, form.form.data)
                if field is None:
@@ -227,10 +227,33 @@ def field(field_id):
 def fields():
      if isadmin(current_user.user_id):
           fields = FieldModel.find_all()
-          return render_template("fields.html", fields = fields)
+          fulltime = FieldModel.find_all_in_form("full-time")
+          parttime = FieldModel.find_all_in_form("part-time")
+
+          return render_template("fields.html", fields = fields, fulltime=fulltime, parttime=parttime)
      else:
           return {"message": "access denied"}     
 
+@app.route("/get_data")
+def get_data():
+     fields = FieldModel.find_all()
+     applications = ApplicationModel.find_all()
+     students = ApplicationModel.find_accepted()
+     users = UserModel.find_all()
+     field_count = 0
+     application_count = 0
+     student_count = 0
+     user_count = 0
+     for field in fields:
+          field_count += 1
+     for application in applications:
+          application_count += 1
+     for student in students:
+          student_count += 1   
+     for user in users:
+          user_count += 1            
+
+     return jsonify({'field_count':field_count, 'application_count': application_count, 'student_count': student_count, 'user_count': user_count})  
 
 @app.route("/field/<int:field_id>/student/add", methods=['GET', 'POST'])
 def add_student_to_class(field_id):
@@ -254,14 +277,16 @@ def add_student_to_class(field_id):
             return render_template("field.html",form = form, name= name, field = field, students = students)       
      return render_template("add_student_toclass.html",form = form, name= name,field = field)
 
-
+@app.route("/students")
+def students():
+     return render_template("students.html")
 
 @app.route("/apply", methods=["GET", "POST"])
 @login_required
 def application():
      form = ApplicationForm()
      name = None
-     fields = FieldModel.find_all_in_form("stacjonarne")
+     fields = FieldModel.find_all_in_form("full-time")
      form.field_of_study.choices = [field.field for field in fields]
      already_sent = ApplicationModel.already_sent(current_user.user_id)
      application = ApplicationModel.find_by_user(current_user.user_id)
@@ -316,6 +341,9 @@ def application_accept(application_id):
           application.status = "accepted"
           application.save_to_db()
           flash("Application has been accepted")
+          if ApplicationModel.find_all_active() is None:
+               return redirect(url_for('applications'))
+
           applications = ApplicationModel.find_all_active()
           return render_template('show_applications.html', applications=applications)
      else:
@@ -327,6 +355,8 @@ def application_decline(application_id):
           application.status = "declined"
           application.save_to_db()
           flash("Application has been declined")
+          if ApplicationModel.find_all_active() is None:
+               return redirect(url_for('applications'))
           applications = ApplicationModel.find_all_active()
           return render_template('show_applications.html', applications=applications)
     else:

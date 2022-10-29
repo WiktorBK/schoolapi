@@ -31,7 +31,13 @@ class ApplicationModel(db.Model):
     @classmethod
     def find_all_active(cls):
         return cls.query.filter_by(status="to_review").order_by(cls.application_id)
+    @classmethod
+    def find_all(cls):
+        return cls.query.all()
 
+    @classmethod
+    def find_accepted(cls):
+        return cls.query.filter_by(status="accepted").order_by(cls.application_id)    
     @classmethod
     def already_sent(cls, user_id):
         if cls.query.filter_by(user_id=user_id).first():

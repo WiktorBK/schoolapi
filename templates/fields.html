@@ -36,13 +36,13 @@
         width: 250px;
         height: 50px;
         margin-bottom: 30px;
-        padding-left :40px;
+        padding-left :30px;
     }
 
     #card:hover {
         box-shadow: 0 12px 20px 0 rgba(0,0,0,0.2);
         cursor: pointer;
-        padding-left: 30px;
+        padding-left: 40px;
     }
 
     #card:ac {
@@ -52,21 +52,66 @@
     #class_container {
         padding: 12px;
     }
+    h1{
+        padding: 0px 0px 0px 10px;
+    }
+    h4{
+        padding: 0px 0px 0px 20px;
+    }
 </style>
+{% for message in get_flashed_messages() %}
+	
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+	  {{ message }}
+	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+
+	
+{% endfor %}
+
+<button type="button" class="btn btn-dark" onclick="history.back()">Back</button>
+<br/>
+<br/>
+
 
 
 <h1>Fields</h1>
 	<br/>
 
-    {%for field in fields%}
-    <a href="{{url_for('field', field_id=field.field_id)}}"> <div id="card">
-        <div id = "class_container">
-        <h5>{{field.field}}</h5>
+    <div class="row">
+
+        <div class="col">
+            <h4>Full-time</h4>
+            <br/>
+            {%for field in fulltime%}
+            <a href="{{url_for('field', field_id=field.field_id)}}"> <div id="card">
+                <div id = "class_container">
+                <h5>{{field.field}}</h5>
+                </div>
+                </div></a>
+        
+            {%endfor%}
+
+
         </div>
-        </div></a>
+        <div class="col">
+            <h4>Part-time</h4>
+            <br/>
+            {%for field in parttime%}
+            <a href="{{url_for('field', field_id=field.field_id)}}"> <div id="card">
+                <div id = "class_container">
+                <h5>{{field.field}}</h5>
+                </div>
+                </div></a>
+        
+            {%endfor%}
 
-    {%endfor%}
+        </div>
 
+    </div> 
+
+
+<br/> <br/> <br/> <br/>
 <a href="{{url_for('add_field')}}" id="add" class="btn btn-primary"><i class="fa fa-plus-square"></i></a>
 
 
