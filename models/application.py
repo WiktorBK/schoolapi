@@ -6,6 +6,7 @@ class ApplicationModel(db.Model):
     __tablename__ = "applications"
     application_id = db.Column(db.Integer, primary_key = True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id')) 
+    personal_id_number = db.Column(db.String(11), nullable=False)
     first_name = db.Column(db.String(80))
     second_name = db.Column(db.String(80))
     last_name = db.Column(db.String(80))

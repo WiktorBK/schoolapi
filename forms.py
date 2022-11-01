@@ -14,6 +14,7 @@ class StudentForm(FlaskForm):
 class FieldForm(FlaskForm):
     field = StringField("Field", validators=[DataRequired()])
     form = SelectField("Form", validators=[DataRequired()])
+    capacity = IntegerField("Capacity", validators=[DataRequired()])
     submit = SubmitField("Submit")
 
 class LoginForm(FlaskForm):
@@ -33,6 +34,7 @@ class ApplicationForm(FlaskForm):
     first_name = StringField("First Name",validators=[DataRequired()], render_kw={"placeholder": "First Name"})
     second_name = StringField("Second Name", render_kw={"placeholder": "Second Name (optional)"})
     last_name = StringField("Last Name", validators=[DataRequired()], render_kw={"placeholder": "Last Name"})
+    personal_id_number = StringField("Personal ID Number", validators=[DataRequired(), Length(11,11, message="Personal ID Number has 11 digits")])
     email = StringField("Email", validators=[DataRequired()], render_kw={"placeholder": "ex: xyz@gmail.com"})
     phone_number = StringField("Phone Number", validators=[DataRequired()], render_kw={"placeholder": "Phone Number"})
     city = StringField("City", validators=[DataRequired()], render_kw={"placeholder": "City"})

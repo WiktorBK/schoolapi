@@ -47,6 +47,8 @@ a:hover {color: black;}
 
         <th scope="col">Field</th>
         <th scope="col">Form</th>
+        <th scope="col">Students</th>
+        <th scope="col">Capacity</th>
     </tr>
         </thead>
     <tbody class="table table-group-divider">
@@ -54,6 +56,8 @@ a:hover {color: black;}
     <tr>
     <td WIDTH=200>{{field.field}}</td>
     <td WIDTH=200>{{field.form}}</td>
+    <td WIDTH=50>{{field.find_students_in_field(field.field_id)}}</td>
+    <td WIDTH=200>{{field.capacity}}</td>
 
 </tr>       
     {%endfor%}
@@ -81,6 +85,11 @@ a:hover {color: black;}
     {{ form.form(
         class="form-control")}}
     <br/>
+    {{ form.capacity.label(
+        class="form-label")}}
+    {{ form.capacity(
+        class="form-control")}}
+    <br/>
 
     {{ form.submit(class ="btn btn-secondary") }}
 
@@ -95,6 +104,9 @@ a:hover {color: black;}
 <tr>
     <th scope="col">Field</th>
     <th scope="col">Form</th>
+    <th scope="col">Students</th>
+    <th scope="col">Capacity</th>
+
 
 </tr>
     </thead>
@@ -103,6 +115,13 @@ a:hover {color: black;}
 <tr>
 <td WIDTH=200>{{field.field}}</td>
 <td WIDTH=200>{{field.form}}</td>
+<td WIDTH=50>{{field.find_students_in_field(field.field_id)}}</td>
+<td WIDTH=50>{{field.capacity}}</td>
+
+
+<td WIDTH=50></td>
+
+
 </tr>
 {%endfor%}
 </tbody>

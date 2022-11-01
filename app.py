@@ -61,7 +61,6 @@ def home():
 
      return render_template('index.html', fields=fields)
 
-
 @app.route("/register", methods=["GET", "POST"])
 def register():
     headers = {'Content-Type': 'text/html'}
@@ -116,6 +115,7 @@ def logout():
      logout_user()
      flash("You Have Been Logged Out!")
      return redirect(url_for('login'))
+
 
 
 @app.route("/dashboard", methods=["GET", "POST"])
@@ -176,6 +176,7 @@ def delete(personal_id_number):
           return render_template("field.html",students=students,  field=field, fields=fields)  
 
 
+
 @app.route("/field/add", methods=["GET", "POST"])
 @login_required
 def add_field():
@@ -187,14 +188,16 @@ def add_field():
                field = FieldModel.find_by_name(form.field.data, form.form.data)
                if field is None:
                     field_name = form.field.data
-                    field = FieldModel(form.field.data, form.form.data)
+                    field = FieldModel(form.field.data, form.form.data, form.capacity.data)
                     field.save_to_db()
                     form.field.data = ''
+                    form.capacity.data = ''
                     flash("Field Added Successfully")
      
+          
           fields = FieldModel.find_all()
-
-          return render_template("add_field.html", field=field_name, form=form, fields=fields)
+  
+          return render_template("add_field.html", field=field_name, form=form, fields=fields, )
      else:
           return {"message": "access denied"}
           
@@ -218,6 +221,7 @@ def field(field_id):
           field = FieldModel.query.get_or_404(field_id)
           fields = FieldModel.find_all()
           students = StudentModel.find_by_field(field_id)
+          print(FieldModel.find_students_in_field(field_id))
           return render_template('field.html', field = field, fields=fields, students=students)
      else:
           return {"message": "access denied"}     
@@ -225,11 +229,10 @@ def field(field_id):
 @app.route("/fields")
 @login_required
 def fields():
-     if isadmin(current_user.user_id):
+     if isadmin(current_user.user_id): 
           fields = FieldModel.find_all()
           fulltime = FieldModel.find_all_in_form("full-time")
-          parttime = FieldModel.find_all_in_form("part-time")
-
+          parttime = FieldModel.find_all_in_form("part-time")    
           return render_template("fields.html", fields = fields, fulltime=fulltime, parttime=parttime)
      else:
           return {"message": "access denied"}     
@@ -281,6 +284,8 @@ def add_student_to_class(field_id):
 def students():
      return render_template("students.html")
 
+
+
 @app.route("/apply", methods=["GET", "POST"])
 @login_required
 def application():
@@ -299,6 +304,7 @@ def application():
                last_name = form.last_name.data,
                email = form.email.data,
                phone_number = form.phone_number.data,
+               personal_id_number = form.personal_id_number.data,
                address1 = form.street_name.data,
                address2 = form.street_number.data,
                city = form.city.data,
@@ -320,10 +326,10 @@ def application():
                form.zip_code.data= ''
                form.form_of_study.data= ''
                form.field_of_study.data= ''
+               form.personal_id_number.data = ''
           
             
      return render_template('application.html', form=form, already_sent=already_sent, application=application)
-
 
 @app.route("/applications")
 @login_required
@@ -338,29 +344,52 @@ def applications():
 def application_accept(application_id):
      if isadmin(current_user.user_id):
           application = ApplicationModel.find_by_id(application_id)
-          application.status = "accepted"
-          application.save_to_db()
-          flash("Application has been accepted")
-          if ApplicationModel.find_all_active() is None:
-               return redirect(url_for('applications'))
-
+          if application.status == "to_review":
+               user = UserModel.find_by_id(application.user_id)
+               recent = StudentModel.get_recent_student()[0]
+               if recent:
+                    student_id = recent + 1
+               else:
+                    student_id = 1     
+               student = StudentModel( 
+                    student_id = student_id,                   
+                    first_name = application.first_name,
+                    personal_id_number = application.personal_id_number,
+                    second_name = application.second_name,
+                    last_name = application.last_name,
+                    email = application.email,
+                    address1 = application.address1,
+                    address2 = application.address2,
+                    city = application.city,
+                    zip_code = application.zip_code,
+                    form_of_study = application.form_of_study,
+                    field_of_study = application.field_of_study,
+                    field_id = FieldModel.find_by_name(application.field_of_study, application.form_of_study).field_id,
+                    phone_number = application.phone_number
+               )
+               application.status = "accepted"
+               user.role = 'student'
+               db.session.commit()
+               student.save_to_db()
+               flash("Application has been accepted")     
           applications = ApplicationModel.find_all_active()
           return render_template('show_applications.html', applications=applications)
      else:
           return{"message": "access denied"}
+
 @app.route("/application/<int:application_id>/decline")
 def application_decline(application_id):
     if isadmin(current_user.user_id):
           application = ApplicationModel.find_by_id(application_id)
-          application.status = "declined"
-          application.save_to_db()
-          flash("Application has been declined")
-          if ApplicationModel.find_all_active() is None:
-               return redirect(url_for('applications'))
-          applications = ApplicationModel.find_all_active()
+          if application.status == "to_review":
+               application.status = "declined"
+               application.save_to_db()
+               flash("Application has been declined")
+          applications = ApplicationModel.find_all_active()        
           return render_template('show_applications.html', applications=applications)
     else:
           return{"message": "access denied"}
+
 @app.route("/application/<int:application_id>/details")
 def application_details(application_id):
     if isadmin(current_user.user_id):

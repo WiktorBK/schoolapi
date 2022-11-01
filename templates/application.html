@@ -44,6 +44,12 @@
     <br/>
     <div class="row">
         <div class="col">        
+            {{ form.personal_id_number.label(
+            class="form-label")}}
+            {{ form.personal_id_number(
+            class="form-control")}}{% for error in form.personal_id_number.errors %} <span style="color: red;">{{ error }}</span> {% endfor%}
+        </div>
+        <div class="col">        
             {{ form.email.label(
                 class="form-label")}}
             {{ form.email(
@@ -55,6 +61,7 @@
             {{ form.phone_number(
             class="form-control")}}
         </div>
+
 
     </div>
 

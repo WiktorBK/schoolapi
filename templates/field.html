@@ -54,6 +54,14 @@
     h5{
         font-size:16px;
     }
+    #capacity{
+        display: inline;    
+        float: right;
+    }
+    h1{
+
+        display: inline;
+    }
 </style>
 
 {% for message in get_flashed_messages() %}
@@ -70,17 +78,19 @@
 <br/>
 <br/>
 
-<h1>{{field.field}}</h1>
-<p style="font-size: 25px;">{{field.form}}</p>
-	<br/>
+<h1>{{field.field}}  </h1>
+<h1 id = "capacity">{{field.find_students_in_field(field.field_id)}}/{{field.capacity}}</h1>
+<p style="font-size: 25px;">{{field.form}} </p>
+
+<br/>
     {%for student in field.students%}
     <a href="{{url_for('update', personal_id_number=student.personal_id_number)}}"> <div id="card">
         <div id = "class_container">
             <table>
             <tr>
-                <td style="font-weight: bold;">{{student.name|capitalize}}</td>
+                <td style="font-weight: bold;">{{student.first_name|capitalize}}</td>
                 <td style="font-weight: bold;"> </td>
-                <td style="font-weight: bold;">{{student.surname|capitalize}}</td>
+                <td style="font-weight: bold;">{{student.last_name|capitalize}}</td>
             </tr>
              </table>
         </div>

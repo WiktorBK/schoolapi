@@ -43,7 +43,6 @@ class UserModel(db.Model, UserMixin):
     @classmethod
     def find_all(cls):
         return cls.query.order_by(cls.surname)
-
     
     @classmethod
     def find_by_email(cls, email):
