@@ -42,7 +42,7 @@ class UserModel(db.Model, UserMixin):
         db.session.commit()
     @classmethod
     def find_all(cls):
-        return cls.query.order_by(cls.surname)
+        return cls.query.order_by(cls.role).all()
     
     @classmethod
     def find_by_email(cls, email):

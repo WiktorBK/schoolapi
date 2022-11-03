@@ -71,9 +71,6 @@ a:hover{
   }
 }
 
-
-
-
  </style>
 {% for message in get_flashed_messages() %}
 	
@@ -116,7 +113,7 @@ a:hover{
     </div>
 
 	<div class="card">
-		<a href="{{url_for('applications')}}">
+		<a href="{{url_for('users')}}">
 		<div class="container">
 		  <center><h4><b>Users</b></h4> 
 		  <div id = "output3"></center></div>
@@ -152,6 +149,10 @@ let text1 = document.querySelector("#output")
 let text2 = document.querySelector("#output1")
 let text3 = document.querySelector("#output2")
 let text4 = document.querySelector("#output3")
+text1.textContent = "0"
+text2.textContent = "0"
+text3.textContent = "0"
+text4.textContent = "0"
 
 fetch('/get_data')
   .then((response) => response.json())

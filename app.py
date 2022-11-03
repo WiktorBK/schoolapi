@@ -282,7 +282,8 @@ def add_student_to_class(field_id):
 
 @app.route("/students")
 def students():
-     return render_template("students.html")
+     students = StudentModel.find_all()
+     return render_template("students.html", students = students)
 
 
 
@@ -400,6 +401,13 @@ def application_details(application_id):
           return render_template("application_details.html", application=application)
     else:
       return{"message": "access denied"}
+
+@app.route("/users")
+def users():
+     users = UserModel.find_all()
+
+     return render_template('users.html', users=users)
+
 
 if __name__ == '__main__':
     app.run(port = 5000, debug=True)

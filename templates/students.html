@@ -1,7 +1,46 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{% for message in get_flashed_messages() %}
+	
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+	  {{ message }}
+	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+{% endfor %}
+<button type="button" class="btn btn-dark" onclick="history.back()">Back</button>
+<br/>
+<br/>
+
+<br/>
+<h1>Students</h1>
+<br/>
+<table class="table">
+    <thead>
+<tr>
+    <th scope="col">First Name</th>
+    <th scope="col">Last Name</th>
+    <th scope="col">Personal ID Number</th>
+    <th scope="col">Address</th>
+    <th scope="col">City</th>
+    <th scope="col">Form of study</th>
+    <th scope="col">Field of study</th>
 
 
-
-{% endblock %}
+</tr>
+    </thead>
+<tbody class="tabl table-group-divider">
+    {%for student in students%}
+<tr>
+<td>{{student.first_name|capitalize}}</td>
+<td>{{student.last_name|capitalize}}</td>
+<td>{{student.personal_id_number}}</td>
+<td>{{student.address1}} {{student.address2}}</td>
+<td>{{student.city|capitalize}} {{student.zip_code}}</td>
+<td>{{student.form_of_study|capitalize}}</td>
+<td>{{student.field_of_study|capitalize}}</td>
+</tr>
+{%endfor%}
+</tbody>
+</table>
+{% endblock %}  
