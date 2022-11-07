@@ -1,6 +1,6 @@
 from flask import Flask, render_template, make_response, flash, request, redirect, url_for, jsonify
 from db import db
-from forms import StudentForm, FieldForm, LoginForm, RegisterForm, ApplicationForm
+from forms import StudentForm, FieldForm, LoginForm, RegisterForm, ApplicationForm, ChangeRole
 from flask_migrate import Migrate
 from models.student import StudentModel
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -221,7 +221,6 @@ def field(field_id):
           field = FieldModel.query.get_or_404(field_id)
           fields = FieldModel.find_all()
           students = StudentModel.find_by_field(field_id)
-          print(FieldModel.find_students_in_field(field_id))
           return render_template('field.html', field = field, fields=fields, students=students)
      else:
           return {"message": "access denied"}     
@@ -405,9 +404,28 @@ def application_details(application_id):
 @app.route("/users")
 def users():
      users = UserModel.find_all()
+     form = ChangeRole()
+     return render_template('users.html', users=users, form=form)
 
-     return render_template('users.html', users=users)
+@app.route("/student/<int:student_id>", methods=["GET", "POST"])
+@login_required
+def student(student_id):
+     if isadmin(current_user.user_id):
+          student = StudentModel.find_by_id(student_id)
+          form = StudentForm()
+          form.form_of_study.default = student.form_of_study
+          form.field_of_study.default = student.field_of_study
+          form.process()
+          fields = FieldModel.find_all_in_form(student.form_of_study)
+          form.field_of_study.choices = [field.field for field in fields]
+          return render_template("student.html", student = student, form=form)
+     else:
+          return {"message": "access denied"}
 
+@app.route("/delete/<int:user_id>")
+def delete_user(user_id):
+     print(f"{user_id} deleted")
+     return {user_id: "deleted"}
 
 if __name__ == '__main__':
     app.run(port = 5000, debug=True)

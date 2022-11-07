@@ -9,14 +9,14 @@ class FieldModel(db.Model):
     capacity = db.Column(db.Integer)
     students = db.relationship('StudentModel', backref='student', lazy='dynamic')
   
-    @classmethod
-    def find_by_name(cls, field_name, field_form):
-        return cls.query.filter_by(form=field_form).filter_by(field=field_name).first()
-
     def __init__(self,field, form, capacity):
         self.field = field
         self.form = form
         self.capacity = capacity
+
+    @classmethod
+    def find_by_name(cls, field_name, field_form):
+        return cls.query.filter_by(form=field_form).filter_by(field=field_name).first()
      
     @classmethod
     def find_all(cls):

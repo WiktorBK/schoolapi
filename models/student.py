@@ -47,17 +47,11 @@ class StudentModel(db.Model, UserMixin):
     def find_all(cls):
         return cls.query.order_by(cls.last_name)
     @classmethod
-    def find_by_id(cls, personal_id_number):
-        return cls.query.filter_by(personal_id_number=personal_id_number).first()
+    def find_by_id(cls, student_id):
+        return cls.query.filter_by(student_id=student_id).first()
      
     @classmethod 
     def find_by_field(cls, field_id):
         return cls.query.filter_by(field_id=field_id).order_by(cls.last_name)
 
-    @classmethod
-    def find_students_in_field(cls, field_id):
-        i = 0
-        for student in StudentModel.find_by_field(field_id):
-            i+=1
-        return i
 

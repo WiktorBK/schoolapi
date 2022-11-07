@@ -5,10 +5,11 @@ from wtforms.validators import DataRequired, EqualTo, Length
 
 class StudentForm(FlaskForm):
     personal_id_number = StringField("Personal ID Number", validators=[DataRequired(), Length(11,11, message="Personal ID Number has 11 digits")])
-    name = StringField("First Name", validators=[DataRequired()])
-    surname = StringField("Last Name", validators=[DataRequired()])
-    field_name = SelectField("Field", validators=[DataRequired()])
-    field_form = SelectField("Form", validators=[DataRequired()])
+    first_name = StringField("First Name", validators=[DataRequired()])
+    second_name = StringField("Second Name", validators=[DataRequired()])
+    last_name = StringField("Last Name", validators=[DataRequired()])
+    field_of_study = SelectField("Field", validators=[DataRequired()])
+    form_of_study = SelectField("Form", validators=[DataRequired()], choices=["full-time", "part-time"])
     submit = SubmitField("Submit")
     
 class FieldForm(FlaskForm):
@@ -45,3 +46,6 @@ class ApplicationForm(FlaskForm):
     form_of_study = SelectField("Form Of Study", validators=[DataRequired()], choices=["full-time", "part-time"], render_kw={"placeholder": "Select"})
     submit = SubmitField("Apply")
 
+class ChangeRole(FlaskForm):
+    role = SelectField("Role", validators=[DataRequired()], choices=["user", "student", "admin"], render_kw={"placeholder": "Select"})
+    submit = SubmitField("Save")

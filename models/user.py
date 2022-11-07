@@ -40,6 +40,7 @@ class UserModel(db.Model, UserMixin):
     def delete_from_db(self):
         db.session.delete(self)
         db.session.commit()
+        
     @classmethod
     def find_all(cls):
         return cls.query.order_by(cls.role).all()

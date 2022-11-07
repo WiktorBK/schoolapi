@@ -25,6 +25,7 @@ class ApplicationModel(db.Model):
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
+        
     def delete_from_db(self):
         db.session.delete(self)
         db.session.commit()
@@ -38,6 +39,7 @@ class ApplicationModel(db.Model):
 
     @classmethod
     def find_accepted(cls):
+
         return cls.query.filter_by(status="accepted").order_by(cls.application_id)    
     @classmethod
     def already_sent(cls, user_id):

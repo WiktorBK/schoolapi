@@ -1,6 +1,17 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<style>
+     body{
+    color: #1a202c;
+    text-align: left;
+    background-color: #e5e5e5;     
+     }
+    .clickable-row{
+        cursor: pointer;
+    } 
+
+</style>
 {% for message in get_flashed_messages() %}
 	
 	<div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -8,39 +19,41 @@
 	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 	</div>
 {% endfor %}
-<button type="button" class="btn btn-dark" onclick="history.back()">Back</button>
+<a href="#" id="arrowback" onclick="history.back()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H6M12 5l-7 7 7 7"/></svg></a>
 <br/>
 <br/>
-
 <br/>
-<h1>Students</h1>
-<br/>
-<table class="table">
+<div class="shadow-sm p-2 mb-3 bg-body rounded">
+    <h1>Students</h1>
+    <hr>
+<table class="table table-hover">
     <thead>
 <tr>
     <th scope="col">First Name</th>
     <th scope="col">Last Name</th>
     <th scope="col">Personal ID Number</th>
-    <th scope="col">Address</th>
-    <th scope="col">City</th>
     <th scope="col">Form of study</th>
     <th scope="col">Field of study</th>
+    <th scope="col"></th>
+
+    
 
 
 </tr>
     </thead>
 <tbody class="tabl table-group-divider">
     {%for student in students%}
-<tr>
+<tr class="clickable-row" onclick="window.location=&quot;{{url_for('student', student_id = student.student_id)}}&quot;">
 <td>{{student.first_name|capitalize}}</td>
 <td>{{student.last_name|capitalize}}</td>
 <td>{{student.personal_id_number}}</td>
-<td>{{student.address1}} {{student.address2}}</td>
-<td>{{student.city|capitalize}} {{student.zip_code}}</td>
 <td>{{student.form_of_study|capitalize}}</td>
 <td>{{student.field_of_study|capitalize}}</td>
+<td WIDTH=50><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3"/></svg></td>
 </tr>
+
 {%endfor%}
 </tbody>
 </table>
+</div>
 {% endblock %}  
