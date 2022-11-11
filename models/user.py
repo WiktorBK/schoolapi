@@ -13,6 +13,7 @@ class UserModel(db.Model, UserMixin):
     password_hash = db.Column(db.String(80))
     role = db.Column(db.String(80), default = 'user')
     applications = db.relationship('ApplicationModel', backref='application', lazy='dynamic')
+    student = db.relationship('StudentModel', backref='studentmodel', lazy='dynamic')
     
     @property
     def password(self):  

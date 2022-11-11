@@ -352,6 +352,7 @@ def application_accept(application_id):
                else:
                     student_id = 1     
                student = StudentModel( 
+                    user_id = application.user_id,
                     student_id = student_id,                   
                     first_name = application.first_name,
                     personal_id_number = application.personal_id_number,
@@ -368,7 +369,6 @@ def application_accept(application_id):
                     phone_number = application.phone_number
                )
                application.status = "accepted"
-               user.role = 'student'
                db.session.commit()
                student.save_to_db()
                flash("Application has been accepted")     
@@ -407,6 +407,26 @@ def users():
      form = ChangeRole()
      return render_template('users.html', users=users, form=form)
 
+@app.route("/user/<int:user_id>", methods=["GET", "POST"])
+def user(user_id):
+     user = UserModel.find_by_id(user_id)
+     application = ApplicationModel.find_by_user(user_id)
+     student = StudentModel.find_by_user(user_id)
+     form = ChangeRole()
+     form.role.default = user.role
+     form.process()
+     if request.method == "POST":
+          print('editing')
+          if request.form["role"] is not None:
+               user.role = request.form['role']
+          try:
+               db.session.commit()
+               flash("User Updated Successfully!")
+          except:
+               flash("User couldn't be updated, try again...")
+
+     return render_template('user.html', form=form, user=user, application=application, student=student)
+
 @app.route("/student/<int:student_id>", methods=["GET", "POST"])
 @login_required
 def student(student_id):
@@ -426,6 +446,8 @@ def student(student_id):
 def delete_user(user_id):
      print(f"{user_id} deleted")
      return {user_id: "deleted"}
+
+                    
 
 if __name__ == '__main__':
     app.run(port = 5000, debug=True)

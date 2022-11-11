@@ -47,5 +47,5 @@ class ApplicationForm(FlaskForm):
     submit = SubmitField("Apply")
 
 class ChangeRole(FlaskForm):
-    role = SelectField("Role", validators=[DataRequired()], choices=["user", "student", "admin"], render_kw={"placeholder": "Select"})
-    submit = SubmitField("Save")
+    role = SelectField("Role", validators=[DataRequired()], choices=["user", "admin"], render_kw={"placeholder": "Select"})
+    submit = SubmitField("Save", render_kw={"onclick": "edit()"})

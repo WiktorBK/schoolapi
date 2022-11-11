@@ -1,12 +1,12 @@
-
-from re import I
 from sqlalchemy import ForeignKey, func
 from db import db
 from models.fields import FieldModel
-from flask_login import UserMixin, login_user, logout_user, LoginManager, login_required, current_user
+from flask_login import UserMixin
+from models.user import UserModel
 
 class StudentModel(db.Model, UserMixin):
     __tablename__ = 'students'
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     student_id = db.Column(db.Integer, primary_key=True)
     field_id = db.Column(db.Integer, db.ForeignKey('fields.field_id'))
     personal_id_number = db.Column(db.String(11), nullable=False)
@@ -22,15 +22,8 @@ class StudentModel(db.Model, UserMixin):
     field_of_study = db.Column(db.String(80))
     phone_number = db.Column(db.String(80)) 
     field = db.relationship('FieldModel')
+    user = db.relationship('UserModel')
  
-
-
-    def json(self):
-        return {"personal_id_number": self.personal_id_number,
-                "name": self.name,
-                "surname": self.surname,
-                "class": self.class_
-                }
                 
     def save_to_db(self):
         db.session.add(self)
@@ -42,7 +35,11 @@ class StudentModel(db.Model, UserMixin):
     @classmethod    
     def get_recent_student(cls):
         return db.session.query(func.max(cls.student_id)).first()
-    
+
+    @classmethod
+    def find_by_user(cls, user_id):
+        return cls.query.filter_by(user_id=user_id).first()
+
     @classmethod
     def find_all(cls):
         return cls.query.order_by(cls.last_name)
