@@ -2,7 +2,7 @@ from ast import ClassDef
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError, SelectField, IntegerField
 from wtforms.validators import DataRequired, EqualTo, Length
-
+from wtforms.fields.html5 import DateField
 class StudentForm(FlaskForm):
     personal_id_number = StringField("Personal ID Number", validators=[DataRequired(), Length(11,11, message="Personal ID Number has 11 digits")])
     first_name = StringField("First Name", validators=[DataRequired()])
@@ -42,8 +42,9 @@ class ApplicationForm(FlaskForm):
     street_name = StringField("Adress Line 1", validators=[DataRequired()], render_kw={"placeholder": "1234 Main St"})
     street_number = StringField("Adress Line 2", validators=[DataRequired()], render_kw={"placeholder": "Apartment"})
     zip_code = StringField("Zip Code", validators=[DataRequired()], render_kw={"placeholder": "xx-xxx"})
-    field_of_study = SelectField("Field Of Study", validators=[DataRequired()], render_kw={"placeholder": "Select"})
-    form_of_study = SelectField("Form Of Study", validators=[DataRequired()], choices=["full-time", "part-time"], render_kw={"placeholder": "Select"})
+    field_of_study = SelectField("Field of Study", validators=[DataRequired()], render_kw={"placeholder": "Select"})
+    form_of_study = SelectField("Form of Study", validators=[DataRequired()], choices=["full-time", "part-time"], render_kw={"placeholder": "Select"})
+    birth_date = DateField("Date of Birth", format="%Y-%m-%d", validators=[DataRequired()])
     submit = SubmitField("Apply")
 
 class ChangeRole(FlaskForm):

@@ -6,16 +6,22 @@ from models.student import StudentModel
 from werkzeug.security import generate_password_hash, check_password_hash
 from models.fields import FieldModel
 from models.user import UserModel
-from flask_login import UserMixin, login_user, logout_user, LoginManager, login_required, current_user
+from flask_login import login_user, logout_user, LoginManager, login_required, current_user
 from models.application import ApplicationModel
-import json
-import requests
+import pytz
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost/schoolapi'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['SECRET_KEY'] = "top_secret"
+
+
+u = datetime.utcnow()
+u = u.replace(tzinfo=pytz.utc)
+print(u.astimezone(pytz.timezone("Europe/Berlin")).strftime('%d.%m.%Y %H:%M:%S'))
+
 
 db.init_app(app)
 @app.before_first_request
@@ -303,6 +309,7 @@ def application():
                second_name = form.second_name.data,
                last_name = form.last_name.data,
                email = form.email.data,
+               birth_date = form.birth_date.data,
                phone_number = form.phone_number.data,
                personal_id_number = form.personal_id_number.data,
                address1 = form.street_name.data,
@@ -319,6 +326,7 @@ def application():
                form.second_name.data= ''
                form.last_name.data= ''
                form.email.data= ''
+               form.birth_date.data = ''
                form.phone_number.data= ''
                form.street_name.data= ''
                form.street_number.data= ''
@@ -359,6 +367,7 @@ def application_accept(application_id):
                     second_name = application.second_name,
                     last_name = application.last_name,
                     email = application.email,
+                    birth_date = application.birth_date,
                     address1 = application.address1,
                     address2 = application.address2,
                     city = application.city,

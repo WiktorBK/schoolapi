@@ -16,6 +16,7 @@ class StudentModel(db.Model, UserMixin):
     email = db.Column(db.String(80))
     address1 = db.Column(db.String(80))
     address2 = db.Column(db.String(80))
+    birth_date = db.Column(db.String(80))
     city = db.Column(db.String(80))
     zip_code = db.Column(db.String(80))
     form_of_study = db.Column(db.String(80))

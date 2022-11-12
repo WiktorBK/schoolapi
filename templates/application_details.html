@@ -1,68 +1,176 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<style>
+       body{
+    background-color: #e5e5e5;    
+   }
+
+</style>
+
 {% for message in get_flashed_messages() %}
 	
-	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
 	  {{ message }}
 	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 	</div>
-
-	
 {% endfor %}
 <a href="#" id="arrowback" onclick="history.back()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H6M12 5l-7 7 7 7"/></svg></a>
 <br/>
 <br/>
 
+<h1>Application Details</h1>
 <br/>
 
-<h2>Application Details</h2>
-	<br/>
-
-	<div class="card">
-  <div class="card-header">
-    {{ application.first_name|capitalize }} {{ application.last_name|capitalize }}
+<div class="col-md-7">
+    <div class="card mb-3">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm-3">
+            <h6 class="mb-0">First Name</h6>
+          </div>
+          <div class="col-sm-9 text-secondary">
+            {{application.first_name|capitalize}}
+          </div>
+        </div>
+        <hr>
+		{%if application.second_name%}
+		<div class="row">
+			<div class="col-sm-3">
+			  <h6 class="mb-0">Second Name</h6>
+			</div>
+			<div class="col-sm-9 text-secondary">
+			  {{application.second_name|capitalize}}
+			</div>
+		  </div>
+		  <hr>
+		{%endif%}		
+        <div class="row">
+          <div class="col-sm-3">
+            <h6 class="mb-0">Last Name</h6>
+          </div>
+          <div class="col-sm-9 text-secondary">
+            {{application.last_name}}
+          </div>
+        </div>
+        <hr>
+		<div class="row">
+			<div class="col-sm-3">
+			  <h6 class="mb-0">Personal ID</h6>
+			</div>
+			<div class="col-sm-9 text-secondary">
+			  {{application.personal_id_number}}
+			</div>
+		  </div>
+		  <hr>
+		  <div class="row">
+			<div class="col-sm-3">
+			  <h6 class="mb-0">Date of Birth</h6>
+			</div>
+			<div class="col-sm-9 text-secondary">
+			  {{application.birth_date}}
+			</div>
+		  </div>
+		  <hr>
+        <div class="row">
+          <div class="col-sm-3">
+            <h6 class="mb-0">Email</h6>
+          </div>
+          <div class="col-sm-9 text-secondary">
+            {{application.email}}
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col-sm-3">
+            <h6 class="mb-0">Phone</h6>
+          </div>
+          <div class="col-sm-9 text-secondary">
+            {{application.phone_number}}
+          </div>
+        </div>
+        <hr>
+		<div class="row">
+			<div class="col-sm-3">
+			  <h6 class="mb-0">Address</h6>
+			</div>
+			<div class="col-sm-9 text-secondary">
+			  {{application.address1|capitalize}} {{application.address2}}, {{application.city|capitalize}} {{application.zip_code}}
+			</div>
+		  </div>
+		  <hr>
+        <div class="row">
+          <div class="col-sm-12">
+          </div>
+        </div>
+      </div>
+    </div>
+	<div class="card mb-3">
+		<div class="card-body">
+		  <div class="row">
+			<div class="col-sm-3">
+			  <h6 class="mb-0">Field of Study</h6>
+			</div>
+			<div class="col-sm-9 text-secondary">
+			  {{application.field_of_study|capitalize}}
+			</div>
+		  </div>
+		  <hr>
+		  <div class="row">
+			<div class="col-sm-3">
+			  <h6 class="mb-0">Form of Study</h6>
+			</div>
+			<div class="col-sm-9 text-secondary">
+			  {{application.form_of_study|capitalize}}
+			</div>
+		  </div>
+		  <hr>
+		</div>
+	  </div>
   </div>
-  <div class="card-body">
-   
-    <p class="card-text">
 
-<div class="container">
-	<div class="row">
-		<div class="col-8">
 
-    <strong>Frist Name:</strong>
-	{{ application.first_name|capitalize }}<br/>
 
-   <strong>Second Name:</strong>
-	{{ application.second_name|capitalize }}<br/>
-
-	<strong>Last Name:</strong>
-	{{ application.last_name|capitalize }}<br/>
-
-    <strong>Phone Number:</strong>
-	{{ application.phone_number }}<br/>
-
-	<strong>Email:</strong>
-	{{ application.email }}<br/>
-
-    <strong>City:</strong>
-	{{ application.city|capitalize }}<br/>
-
-    <strong>Adress:</strong>
-	{{ application.address1|capitalize }} {{ application.address2}}<br/>
-
-    <strong>Zip Code:</strong>
-	{{ application.zip_code }}<br/>
-
-    <strong>Form:</strong>
-	{{ application.form_of_study|capitalize }}<br/>
     
-    <strong>Field:</strong>
-	{{ application.field_of_study|capitalize }}<br/>
+  <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header" style="font-weight: bold">
+            <h4>Edit User Permissions</h4>
+          </div>
+            <div class="modal-body">
+              <form action="#" method="POST">
+ 
+                <br/>
+                <div class="modal-footer" style="padding-bottom: 0px;">
+                    
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+        </div>
+    </div>
+  </div>
 
-    <strong>Date Sent:</strong>
-	{{ application.date }}<br/>
-    	
-    </p>
+<script>
+ function deleteUser(user_id, o) {
+     var p=o.parentNode.parentNode;
+     p.parentNode.removeChild(p);
+
+    fetch('/decline/' + "{{application.application_id}}").then(function(response) {
+ 
+    response.json().then(function(data) { 
+ })
+});
+}
+function edit() {
+    fetch('/accept/' + "{{application.application_id}}").then(function(response) {
+ 
+    response.json().then(function(data) { 
+ })
+});
+
+
+}
+</script>
 {% endblock %}
+

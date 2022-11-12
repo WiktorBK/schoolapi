@@ -1,6 +1,6 @@
 from db import db
 from datetime import datetime 
-
+import pytz
 
 class ApplicationModel(db.Model):
     __tablename__ = "applications"
@@ -18,8 +18,12 @@ class ApplicationModel(db.Model):
     form_of_study = db.Column(db.String(80))
     field_of_study = db.Column(db.String(80))
     phone_number = db.Column(db.String(80))
-    date = db.Column(db.DateTime, default=datetime.utcnow)
+    birth_date = db.Column(db.String(80))
+    u = datetime.utcnow()
+    u = u.replace(tzinfo=pytz.utc)
+    date = db.Column(db.DateTime, default=u.astimezone(pytz.timezone("Europe/Berlin")).strftime('%d.%m.%Y %H:%M:%S'))
     status = db.Column(db.String(80), default="to_review")
+    message = db.Column(db.String(1000))
     user = db.relationship('UserModel')  
 
     def save_to_db(self):

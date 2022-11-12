@@ -10,13 +10,14 @@
     <hr>
     <p class="mb-0">Click <a href="{{url_for('application_details', application_id = application.application_id)}}" class="alert-link">here</a> to see the details of your application</p>
   </div>
-
-  <a href="#" id="arrowback" onclick="history.back()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H6M12 5l-7 7 7 7"/></svg></a>
 <br/>
 <br/>
 <br/>
 
 {%else%}
+<a href="#" id="arrowback" onclick="history.back()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H6M12 5l-7 7 7 7"/></svg></a>
+<br/>
+<br/>
 <h1> Application Form </h1>
 
 <br/>
@@ -54,6 +55,16 @@
             class="form-control")}}{% for error in form.personal_id_number.errors %} <span style="color: red;">{{ error }}</span> {% endfor%}
         </div>
         <div class="col">        
+            {{ form.birth_date.label(
+            class="form-label")}}
+            {{ form.birth_date(
+            class="form-control")}}
+        </div>
+
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col">        
             {{ form.email.label(
                 class="form-label")}}
             {{ form.email(
@@ -65,10 +76,7 @@
             {{ form.phone_number(
             class="form-control")}}
         </div>
-
-
     </div>
-
         <br/>
     {{ form.street_name.label(
         class="form-label")}}
