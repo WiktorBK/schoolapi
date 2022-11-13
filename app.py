@@ -1,6 +1,6 @@
 from flask import Flask, render_template, make_response, flash, request, redirect, url_for, jsonify
 from db import db
-from forms import StudentForm, FieldForm, LoginForm, RegisterForm, ApplicationForm, ChangeRole
+from forms import StudentForm, FieldForm, LoginForm, RegisterForm, ApplicationForm, ChangeRole, DeclineForm
 from flask_migrate import Migrate
 from models.student import StudentModel
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -17,10 +17,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['SECRET_KEY'] = "top_secret"
 
-
-u = datetime.utcnow()
-u = u.replace(tzinfo=pytz.utc)
-print(u.astimezone(pytz.timezone("Europe/Berlin")).strftime('%d.%m.%Y %H:%M:%S'))
 
 
 db.init_app(app)
@@ -399,14 +395,24 @@ def application_decline(application_id):
     else:
           return{"message": "access denied"}
 
-@app.route("/application/<int:application_id>/details")
+@app.route("/application/<int:application_id>/details", methods=["GET", "POST"])
 def application_details(application_id):
     if isadmin(current_user.user_id):
        application = ApplicationModel.find_by_id(application_id)
     else:
         application = ApplicationModel.find_by_user(current_user.user_id)
     if isadmin(current_user.user_id) or application and application_id == application.application_id:
-          return render_template("application_details.html", application=application)
+          form = DeclineForm()
+          if request.method == "POST":
+
+               #finish declining
+
+               check = request.form.get('check')
+               message = request.form.get('message')
+
+               return redirect(url_for('applications'))
+
+          return render_template("application_details.html", application=application, form=form)
     else:
       return{"message": "access denied"}
 

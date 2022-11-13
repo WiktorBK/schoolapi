@@ -20,9 +20,11 @@
 <br/>
 
 <h1>Application Details</h1>
+<button style="float:right" class="btn btn-danger btn-lg" data-bs-toggle="modal" data-bs-target="#DeclineModal">Decline</button>
+<button style="float:right; margin-right: 20px;" class="btn btn-success btn-lg">Accept</button>
 <br/>
 
-<div class="col-md-7">
+<div class="col-md-9">
     <div class="card mb-3">
       <div class="card-body">
         <div class="row">
@@ -128,24 +130,31 @@
 		</div>
 	  </div>
   </div>
-
-
-
     
-  <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="DeclineModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header" style="font-weight: bold">
-            <h4>Edit User Permissions</h4>
+            <h4>Dangerous Action</h4>
           </div>
             <div class="modal-body">
-              <form action="#" method="POST">
- 
-                <br/>
-                <div class="modal-footer" style="padding-bottom: 0px;">
-                    
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <form method="post">
+                <div class="form-check">
+                Allow candidate to apply again<input class = "form-check-input" id = "flexCheckDefault" type="checkbox" name="check">
               </div>
+                <br/>
+                <div class="form-floating">
+                  <textarea class="form-control" name="message" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                  <label for="floatingTextarea2">Message</label>
+                </div>
+                
+                <br class="modal-footer" style="padding-bottom: 0px;">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-danger" data-bs-dismiss="modal">Confirm</button>
+                
+                </form>
+                </div>
+          </div>
             </div>
         </div>
     </div>

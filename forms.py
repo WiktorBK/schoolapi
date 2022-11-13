@@ -1,6 +1,6 @@
 from ast import ClassDef
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError, SelectField, IntegerField
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError, SelectField, IntegerField, BooleanField
 from wtforms.validators import DataRequired, EqualTo, Length
 from wtforms.fields.html5 import DateField
 class StudentForm(FlaskForm):
@@ -50,3 +50,7 @@ class ApplicationForm(FlaskForm):
 class ChangeRole(FlaskForm):
     role = SelectField("Role", validators=[DataRequired()], choices=["user", "admin"], render_kw={"placeholder": "Select"})
     submit = SubmitField("Save", render_kw={"onclick": "edit()"})
+
+class DeclineForm(FlaskForm):
+    message = StringField("Message", render_kw={"placeholder": "Leave short message for candidate"})
+    checkbox = BooleanField("May apply again")
