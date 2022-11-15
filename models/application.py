@@ -24,6 +24,7 @@ class ApplicationModel(db.Model):
     date = db.Column(db.DateTime, default=u.astimezone(pytz.timezone("Europe/Berlin")).strftime('%d.%m.%Y %H:%M:%S'))
     status = db.Column(db.String(80), default="to_review")
     message = db.Column(db.String(1000))
+    mayapply = db.Column(db.Boolean)
     user = db.relationship('UserModel')  
 
     def save_to_db(self):

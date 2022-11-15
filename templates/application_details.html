@@ -21,7 +21,7 @@
 
 <h1>Application Details</h1>
 <button style="float:right" class="btn btn-danger btn-lg" data-bs-toggle="modal" data-bs-target="#DeclineModal">Decline</button>
-<button style="float:right; margin-right: 20px;" class="btn btn-success btn-lg">Accept</button>
+<button onclick = "accept()" style="float:right; margin-right: 20px;" class="btn btn-success btn-lg">Accept</button>
 <br/>
 
 <div class="col-md-9">
@@ -161,25 +161,14 @@
   </div>
 
 <script>
- function deleteUser(user_id, o) {
-     var p=o.parentNode.parentNode;
-     p.parentNode.removeChild(p);
-
-    fetch('/decline/' + "{{application.application_id}}").then(function(response) {
+ function accept() {
+    fetch('/application/' + "{{application.application_id}}" + '/accept').then(function(response) {
  
     response.json().then(function(data) { 
  })
 });
 }
-function edit() {
-    fetch('/accept/' + "{{application.application_id}}").then(function(response) {
- 
-    response.json().then(function(data) { 
- })
-});
 
-
-}
 </script>
 {% endblock %}
 

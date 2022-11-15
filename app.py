@@ -374,26 +374,17 @@ def application_accept(application_id):
                     phone_number = application.phone_number
                )
                application.status = "accepted"
-               db.session.commit()
-               student.save_to_db()
-               flash("Application has been accepted")     
-          applications = ApplicationModel.find_all_active()
-          return render_template('show_applications.html', applications=applications)
+               try:
+                    db.session.commit()
+                    student.save_to_db()
+                    flash("Application has been accepted") 
+               except:
+                    flash("Application couldn't be accepted") 
+
+               return redirect(url_for('applications'))
      else:
           return{"message": "access denied"}
 
-@app.route("/application/<int:application_id>/decline")
-def application_decline(application_id):
-    if isadmin(current_user.user_id):
-          application = ApplicationModel.find_by_id(application_id)
-          if application.status == "to_review":
-               application.status = "declined"
-               application.save_to_db()
-               flash("Application has been declined")
-          applications = ApplicationModel.find_all_active()        
-          return render_template('show_applications.html', applications=applications)
-    else:
-          return{"message": "access denied"}
 
 @app.route("/application/<int:application_id>/details", methods=["GET", "POST"])
 def application_details(application_id):
@@ -404,11 +395,21 @@ def application_details(application_id):
     if isadmin(current_user.user_id) or application and application_id == application.application_id:
           form = DeclineForm()
           if request.method == "POST":
-
-               #finish declining
-
                check = request.form.get('check')
                message = request.form.get('message')
+
+               application.message = message
+               application.status = "declined"
+               if check:
+                    application.mayapply = 'True'
+               else:
+                    application.mayapply = 'False'
+
+               try:
+                    db.session.commit()
+                    flash("Application declined succesfully")
+               except:
+                    flash("Couldn't decline application")
 
                return redirect(url_for('applications'))
 
