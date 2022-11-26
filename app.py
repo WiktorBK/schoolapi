@@ -8,15 +8,13 @@ from models.fields import FieldModel
 from models.user import UserModel
 from flask_login import login_user, logout_user, LoginManager, login_required, current_user
 from models.application import ApplicationModel
-import pytz
-from datetime import datetime
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost/schoolapi'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['SECRET_KEY'] = "top_secret"
-
 
 
 db.init_app(app)
@@ -30,7 +28,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 
-def isadmin(user_id):
+def isadmin():
      if current_user.role == 'admin':
           return True
      else:
@@ -47,12 +45,10 @@ def page_not_found(e):
 def internal_server_error(e):
      return render_template("500.html"), 500
 
-
 @app.route("/admin")
 @login_required
 def admin():
-     user_id = current_user.user_id
-     if isadmin(user_id):
+     if isadmin():
           return render_template('admin.html')
      else:
           return {"message": "access denied"}
@@ -82,7 +78,7 @@ def register():
             form.password_repeat.data = ''
             flash("Account Created Successfully. Logged in automatically")
             login_user(user)
-            if isadmin(current_user.user_id):
+            if isadmin():
                return redirect(url_for('admin'))
             else:
                return redirect(url_for('dashboard'))
@@ -99,7 +95,7 @@ def login():
                if check_password_hash(user.password_hash, form.password.data):
                     login_user(user)
                     flash("Login Successfull!")
-                    if isadmin(current_user.user_id):
+                    if isadmin():
                          return redirect(url_for('admin'))
                     else:
                          return redirect(url_for('dashboard'))
@@ -110,15 +106,12 @@ def login():
 
      return render_template('login.html', form=form)
 
-
 @app.route('/logout', methods=["GET", "POST"])
 @login_required
 def logout():
      logout_user()
      flash("You Have Been Logged Out!")
      return redirect(url_for('login'))
-
-
 
 @app.route("/dashboard", methods=["GET", "POST"])
 @login_required
@@ -182,7 +175,7 @@ def delete(personal_id_number):
 @app.route("/field/add", methods=["GET", "POST"])
 @login_required
 def add_field():
-     if isadmin(current_user.user_id):
+     if isadmin():
           form = FieldForm()
           field_name = None
           form.form.choices = ["full-time", "part-time"]
@@ -195,7 +188,6 @@ def add_field():
                     form.field.data = ''
                     form.capacity.data = ''
                     flash("Field Added Successfully")
-     
           
           fields = FieldModel.find_all()
   
@@ -219,7 +211,7 @@ def field_(form):
 @app.route("/field/<int:field_id>", methods=["GET", "POST"])
 @login_required
 def field(field_id):
-     if isadmin(current_user.user_id):
+     if isadmin():
           field = FieldModel.query.get_or_404(field_id)
           fields = FieldModel.find_all()
           students = StudentModel.find_by_field(field_id)
@@ -230,7 +222,7 @@ def field(field_id):
 @app.route("/fields")
 @login_required
 def fields():
-     if isadmin(current_user.user_id): 
+     if isadmin(): 
           fields = FieldModel.find_all()
           fulltime = FieldModel.find_all_in_form("full-time")
           parttime = FieldModel.find_all_in_form("part-time")    
@@ -286,8 +278,6 @@ def students():
      students = StudentModel.find_all()
      return render_template("students.html", students = students)
 
-
-
 @app.route("/apply", methods=["GET", "POST"])
 @login_required
 def application():
@@ -338,15 +328,16 @@ def application():
 @app.route("/applications")
 @login_required
 def applications():
-     if isadmin(current_user.user_id):
+     if isadmin():
           applications = ApplicationModel.find_all_active()
           return render_template("show_applications.html", applications = applications)
      else:
           return{"message": "access denied"}
 
 @app.route("/application/<int:application_id>/accept")
+@login_required
 def application_accept(application_id):
-     if isadmin(current_user.user_id):
+     if isadmin():
           application = ApplicationModel.find_by_id(application_id)
           if application.status == "to_review":
                user = UserModel.find_by_id(application.user_id)
@@ -381,10 +372,11 @@ def application_accept(application_id):
                except:
                     flash("Application couldn't be accepted") 
 
-               return redirect(url_for('applications'))
-     else:
-          return{"message": "access denied"}
+               return {"message": "application accepted"}
 
+
+     else:     
+          return {"message": "access denied"}
 
 @app.route("/application/<int:application_id>/details", methods=["GET", "POST"])
 def application_details(application_id):
@@ -392,7 +384,7 @@ def application_details(application_id):
        application = ApplicationModel.find_by_id(application_id)
     else:
         application = ApplicationModel.find_by_user(current_user.user_id)
-    if isadmin(current_user.user_id) or application and application_id == application.application_id:
+    if isadmin() and application or application and application_id == application.application_id:
           form = DeclineForm()
           if request.method == "POST":
                check = request.form.get('check')
@@ -401,15 +393,16 @@ def application_details(application_id):
                application.message = message
                application.status = "declined"
                if check:
-                    application.mayapply = 'True'
+                    application.mayapply = True
                else:
-                    application.mayapply = 'False'
-
+                    application.mayapply = False
+                         
                try:
+                    flash("Application declined")
                     db.session.commit()
-                    flash("Application declined succesfully")
                except:
-                    flash("Couldn't decline application")
+                    flash("couldn't perform this action... Try Again")
+ 
 
                return redirect(url_for('applications'))
 
@@ -419,34 +412,40 @@ def application_details(application_id):
 
 @app.route("/users")
 def users():
-     users = UserModel.find_all()
-     form = ChangeRole()
-     return render_template('users.html', users=users, form=form)
+     if isadmin():
+          users = UserModel.find_all()
+          form = ChangeRole()
+          return render_template('users.html', users=users, form=form)
+     else:
+          return {"message": "access denied"}
 
 @app.route("/user/<int:user_id>", methods=["GET", "POST"])
 def user(user_id):
-     user = UserModel.find_by_id(user_id)
-     application = ApplicationModel.find_by_user(user_id)
-     student = StudentModel.find_by_user(user_id)
-     form = ChangeRole()
-     form.role.default = user.role
-     form.process()
-     if request.method == "POST":
-          print('editing')
-          if request.form["role"] is not None:
-               user.role = request.form['role']
-          try:
-               db.session.commit()
-               flash("User Updated Successfully!")
-          except:
-               flash("User couldn't be updated, try again...")
+     if isadmin():
+          user = UserModel.find_by_id(user_id)
+          application = ApplicationModel.find_by_user(user_id)
+          student = StudentModel.find_by_user(user_id)
+          form = ChangeRole()
+          form.role.default = user.role
+          form.process()
+          if request.method == "POST":
+               print('editing')
+               if request.form["role"] is not None:
+                    user.role = request.form['role']
+               try:
+                    db.session.commit()
+                    flash("User Updated Successfully!")
+               except:
+                    flash("User couldn't be updated, try again...")
 
-     return render_template('user.html', form=form, user=user, application=application, student=student)
+          return render_template('user.html', form=form, user=user, application=application, student=student)
+     else:
+          return {"message": "access denied"}
 
 @app.route("/student/<int:student_id>", methods=["GET", "POST"])
 @login_required
 def student(student_id):
-     if isadmin(current_user.user_id):
+     if isadmin():
           student = StudentModel.find_by_id(student_id)
           form = StudentForm()
           form.form_of_study.default = student.form_of_study
@@ -463,8 +462,7 @@ def delete_user(user_id):
      print(f"{user_id} deleted")
      return {user_id: "deleted"}
 
-                    
-
+#running app
 if __name__ == '__main__':
     app.run(port = 5000, debug=True)
 

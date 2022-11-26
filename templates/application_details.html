@@ -163,8 +163,9 @@
 <script>
  function accept() {
     fetch('/application/' + "{{application.application_id}}" + '/accept').then(function(response) {
- 
+
     response.json().then(function(data) { 
+      window.location.href = "/applications"
  })
 });
 }
