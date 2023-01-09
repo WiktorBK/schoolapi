@@ -429,11 +429,19 @@ def application_details(application_id):
     else:
       return{"message": "access denied"}
 
+@app.route("/application/<int:application_id>/review")
+@login_required
+def application_review(application_id):
+     if isadmin():
+          application = ApplicationModel.find_by_id(application_id)
+          return render_template("application_review.html", application=application)
+     else:
+          return {"message": "access denied"}
+
 @app.route("/users")
 def users():
      if isadmin():
           users = UserModel.find_all()
-          print('test')
           form = ChangeRole()
           return render_template('users.html', users=users, form=form)
      else:
