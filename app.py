@@ -433,6 +433,7 @@ def application_details(application_id):
 def users():
      if isadmin():
           users = UserModel.find_all()
+          print('test')
           form = ChangeRole()
           return render_template('users.html', users=users, form=form)
      else:
