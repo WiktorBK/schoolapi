@@ -2,94 +2,36 @@
 
 {% block content %}
 <style>
+  .parent {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+grid-column-gap: 23px;
+grid-row-gap: 35px;
+}
    body{
     color: #1a202c;
     text-align: left;
     background-color: #e5e5e5;    
      }
-     .card {
-  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-  transition: 0.3s;
-  width: 40%;
-  border-radius: 5px;
-  margin-top: 25px;
-  background-color: #505151;
-}
-a{
-  text-decoration: None;
-  color: rgb(233, 231, 231);
-}
+
 #add{
     display: flex;
     float: left;
 }
+a{
+  text-decoration: none;
+  color: black;
+  transition: 0.3s;
+}    
 a:hover{
-  color: rgb(247, 244, 244);
+  opacity: 0.75;
+  color:black;
 }
-    .card:hover {
-  box-shadow: 0 16px 32px 0 rgba(0,0,0,0.2);
-  background-color: #595959;
-    }
-  
-    .container{
-       padding: 7px 20px 5px 0px;
-       transition: 0.3s;
-
-    }
-   
-    h1{
-        padding: 0px 0px 0px 10px;
-    }
-    h4{
-        padding: 0px 0px 0px 20px;
-    }
-    @media (max-width: 1200px) {
-  h4{
-    font-size:20px;
-  }      
-  .card {
-    width: 60%;
-  }
-}
-
-@media (max-width: 780px) {
-  h4{
-    font-size:25px;
-  }     
-  p{
-    font-size: 20px;
-  } 
-  .card {
-    width: 60%;
-  }
-}
-@media (max-width: 500px) {
-  #form{
-    font-size:25px;
-    padding: 20px 0px 0px 20px;
-
-  }     
-  p{
-    font-size: 20px;
-  } 
-  .card {
-    width: 60%;
-    margin-left: 20px;
-  }
-  h1{
-    font-size:35px;
-  }
-}
-  #reload,#arrowback{
+#reload,#arrowback{
     display:inline-block;
 }
 #reload{
-    float: right;
-    margin-right: 10px;
-    transition: 0.3s;
-}
-#reload:hover{
-    transform: rotate(20deg);
+  float:right;
 }
 
 </style>
@@ -109,44 +51,34 @@ a:hover{
   </div><br/>
 <br/>
 
+<h1 style="font-size: 50px;">Fields</h1>
+<hr>
+<div class="parent">
+  {%for field in fulltime%}
+  <a href="{{url_for('field', field_id=field.field_id)}}">
+  <div class="card text-center ">
+    <div class="card-body">
+      <h4 class="card-title">{{field.field}}</h4>
+    </div>
+    <div class="card-footer">Full-time</div>
+  </div>
+  </a>
+  {%endfor%}
+  {%for field in parttime%}
+  <a href="{{url_for('field', field_id=field.field_id)}}">
+  <div class="card text-center ">
+    <div class="card-body">
+      <h4 class="card-title">{{field.field}}</h4>
+    </div>
+    <div class="card-footer">Part-time</div>
+  </div>
+</a>
+  {%endfor%}
+</div>
 
 
-<h1>Fields</h1>
-	<br/>
-    <div class="row">
-        <div class="col-md-6">
-            <h4 id="form">Full-time</h4>
-            <br/>
-            {%for field in fulltime%}
-                <div class="card">
-                    <a href="{{url_for('field', field_id=field.field_id)}}">
-                    <div class="container">
-                      <center><h4>{{field.field}}</h4></center>
-                        
-                      </div>
-                    </a>
-                    </div>    
-        
-            {%endfor%}
 
-
-        </div>
-        <div class="col-md-6">
-            <h4 id="form">Part-time</h4>
-            <br/>
-            {%for field in parttime%}
-            <div class="card">
-                <a href="{{url_for('field', field_id=field.field_id)}}">
-                <div class="container">
-                  <center><h4>{{field.field}}</h4></center>
-                  </div>
-                </a>
-                </div>    
-        
-            {%endfor%}
-
-        </div>
-    </div> 
+  
 </br>
 </br>
 <a href="{{url_for('add_field')}}"><button type="button" class="btn btn-dark">New Field</button></a>

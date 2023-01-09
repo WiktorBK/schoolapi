@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
+<style>
+           body{
+    background-color: #e5e5e5;    
+   }
+</style>
 {%if already_sent%}
 <div class="alert alert-success" role="alert">
     <h4 class="alert-heading">Application Sent!</h4>
@@ -22,7 +26,7 @@
 
 <br/>
 <div class="shadow-sm p-3 mb-5 bg-body rounded">
-    <h4>Adress</h4>
+    <h4>Personal Information</h4>
     <br/>
 <form  method="POST" action="{{url_for('application')}}">
     {{ form.hidden_tag() }}
@@ -77,6 +81,8 @@
             class="form-control")}}
         </div>
     </div>
+        <br/>
+        <h4>Address</h4>
         <br/>
     {{ form.street_name.label(
         class="form-label")}}

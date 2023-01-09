@@ -20,8 +20,10 @@
 <br/>
 
 <h1>Application Details</h1>
+{%if current_user.role == "admin"%}
 <button style="float:right" class="btn btn-danger btn-lg" data-bs-toggle="modal" data-bs-target="#DeclineModal">Decline</button>
 <button onclick = "accept()" style="float:right; margin-right: 20px;" class="btn btn-success btn-lg">Accept</button>
+{%endif%}
 <br/>
 
 <div class="col-md-9">

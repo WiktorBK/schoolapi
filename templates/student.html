@@ -61,6 +61,7 @@
     color: black;
 
 }
+
 </style>
 
 {% for message in get_flashed_messages() %}
@@ -77,10 +78,10 @@
             <div class="col-md-4 mb-3">
               <div class="card">
                 <div class="card-body">
-                  <div class="d-flex flex-column align-items-center text-center">
-                    <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin" class="rounded-circle" width="150">
+                  <div  class="d-flex flex-column align-items-center text-center">
+                    <img style="display: inline;"src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin" class="rounded-circle" width="150">
                     <div class="mt-3">
-                      <h4>{{student.first_name|capitalize}} {{student.last_name|capitalize}}</h4>
+                      <h4 >{{student.first_name|capitalize}} {{student.last_name|capitalize}}</h4>
                       <p class="text-secondary mb-1">{{student.field_of_study}}</p>
                       <p class="text-muted font-size-sm">{{student.form_of_study}}</p>
                     </div>
@@ -136,7 +137,7 @@
                   <hr>
                   <div class="row">
                     <div class="col-sm-3">
-                      <h6 class="mb-0">Date Of Birth</h6>
+                      <h6 class="mb-0">Date of Birth</h6>
                     </div>
                     <div class="col-sm-9 text-secondary">
                       {{student.birth_date}}
@@ -145,7 +146,7 @@
                   <hr>
                   <div class="row">
                     <div class="col-sm-3">
-                      <h6 class="mb-0">Field Of Study</h6>
+                      <h6 class="mb-0">Field of Study</h6>
                     </div>
                     <div class="col-sm-9 text-secondary">
                       {{student.field_of_study}}
@@ -154,7 +155,7 @@
                   <hr>
                   <div class="row">
                     <div class="col-sm-3">
-                      <h6 class="mb-0">Form Of Study</h6>
+                      <h6 class="mb-0">Form of Study</h6>
                     </div>
                     <div class="col-sm-9 text-secondary">
                       {{student.form_of_study}}
@@ -194,41 +195,20 @@
   <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header" style="font-weight: bold">
-          <h4>Edit Student Details</h4>
+          <h4>Move Student</h4>
         </div>
           <div class="modal-body">
             <form action="/student/{{student.student_id}}" method="POST">
               {{ form.hidden_tag()}}
-              {{ form.first_name.label(
-                  class="form-label")}}
-              {{ form.first_name(
-                  class="form-control", value=student.first_name)}}
-                  <br/>
-                  {{ form.second_name.label(
-                      class="form-label")}}
-                  {{ form.second_name(
-                      class="form-control", value=student.second_name)}}
-              <br/>
-              {{ form.last_name.label(
-                  class="form-label")}}
-              {{ form.last_name(
-                  class="form-control", value=student.last_name)}}
-                  <br/>
-                  {{ form.csrf_token }}
                   {{ form.form_of_study.label(
                       class="form-label")}}
                       {{ form.form_of_study(
-                      class="form-control", value=student.form_of_study)}}
+                      class="form-control")}}
                       <br/>
                       {{ form.field_of_study.label(
                           class="form-label")}}
                           {{ form.field_of_study(
                           class="form-control")}}
-              <br/>
-              {{ form.personal_id_number.label(
-                  class="form-label")}}
-              {{ form.personal_id_number(
-                  class="form-control", value=student.personal_id_number)}}
               <br/>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -243,28 +223,28 @@
         
 
 <script>
-  var form_select = document.getElementById("form_of_study");
-  var field_select = document.getElementById("field_of_study");
- 
-         form_select.onchange = function()  {
-              
-             form = form_select.value;
+
+var form_select = document.getElementById("form_of_study");
+ var field_select = document.getElementById("field_of_study");
+
+        form_select.onchange = function()  {
              
-             fetch('/field/' + form).then(function(response) {
- 
-                 response.json().then(function(data) {
-                     var optionHTML = '';
-                     for (var field of data.fields) {
-                         optionHTML += '<option value="' + field.field + '">' + field.name + '</option>';
-                     }
- 
-                     field_select.innerHTML = optionHTML;
-                 })
-                 
-             });
-         }
+            form = form_select.value;
+            
+            fetch('/field/' + form).then(function(response) {
+
+                response.json().then(function(data) {
+                    var optionHTML = '';
+                    for (var field of data.fields) {
+                        optionHTML += '<option value="' + field.field + '">' + field.name + '</option>';
+                    }
+
+                    field_select.innerHTML = optionHTML;
+                })
+                
+            });
+        }
+
  
  </script>
-
-
 {% endblock %}  

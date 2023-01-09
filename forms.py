@@ -9,8 +9,8 @@ class StudentForm(FlaskForm):
     first_name = StringField("First Name", validators=[DataRequired()])
     second_name = StringField("Second Name", validators=[DataRequired()])
     last_name = StringField("Last Name", validators=[DataRequired()])
-    field_of_study = SelectField("Field", validators=[DataRequired()])
-    form_of_study = SelectField("Form", validators=[DataRequired()], choices=["full-time", "part-time"])
+    field_of_study = SelectField("Field of Study", validators=[DataRequired()], render_kw={"placeholder": "Select"})
+    form_of_study = SelectField("Form of Study", validators=[DataRequired()], choices=["full-time", "part-time"], render_kw={"placeholder": "Select"})
     submit = SubmitField("Submit")
     
 class FieldForm(FlaskForm):

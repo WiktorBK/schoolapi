@@ -117,7 +117,8 @@ def logout():
 @login_required
 def dashboard():
      application = ApplicationModel.find_by_user(current_user.user_id)
-     return render_template('dashboard.html', application=application)
+     user = UserModel.find_by_id(current_user.user_id)
+     return render_template('dashboard.html', application=application, user=user)
 
 @app.route("/update/<string:personal_id_number>", methods=['GET', 'POST'])
 def update(personal_id_number):
@@ -234,22 +235,22 @@ def fields():
 def get_data():
      fields = FieldModel.find_all()
      applications = ApplicationModel.find_all()
+     active_application = ApplicationModel.find_all_active()
      students = ApplicationModel.find_accepted()
      users = UserModel.find_all()
      field_count = 0
      application_count = 0
+     active_count = 0
      student_count = 0
      user_count = 0
-     for field in fields:
-          field_count += 1
-     for application in applications:
-          application_count += 1
-     for student in students:
-          student_count += 1   
-     for user in users:
-          user_count += 1            
+     for field in fields: field_count += 1
+     for application in applications:  application_count += 1
+     for active_application in active_application: active_count += 1
+     old = application_count - active_count
+     for student in students: student_count += 1   
+     for user in users: user_count += 1            
 
-     return jsonify({'field_count':field_count, 'application_count': application_count, 'student_count': student_count, 'user_count': user_count})  
+     return jsonify({'field_count':field_count, 'application_count': application_count,'active_applications': active_count, 'old_applications': old, 'student_count': student_count, 'user_count': user_count})  
 
 @app.route("/field/<int:field_id>/student/add", methods=['GET', 'POST'])
 def add_student_to_class(field_id):
@@ -325,12 +326,30 @@ def application():
             
      return render_template('application.html', form=form, already_sent=already_sent, application=application)
 
+@app.route("/applications-dashboard")
+@login_required
+def applications_site():
+     if isadmin():
+          return render_template('application-site.html')
+     else:
+          return {"message": "access denied"}
+
+
 @app.route("/applications")
 @login_required
 def applications():
      if isadmin():
           applications = ApplicationModel.find_all_active()
           return render_template("show_applications.html", applications = applications)
+     else:
+          return{"message": "access denied"}
+
+@app.route("/applications-old")
+@login_required
+def applications_old():
+     if isadmin():
+          applications = ApplicationModel.find_old()
+          return render_template("old_applications.html", applications = applications)
      else:
           return{"message": "access denied"}
 
@@ -380,7 +399,7 @@ def application_accept(application_id):
 
 @app.route("/application/<int:application_id>/details", methods=["GET", "POST"])
 def application_details(application_id):
-    if isadmin(current_user.user_id):
+    if isadmin():
        application = ApplicationModel.find_by_id(application_id)
     else:
         application = ApplicationModel.find_by_user(current_user.user_id)
@@ -448,11 +467,13 @@ def student(student_id):
      if isadmin():
           student = StudentModel.find_by_id(student_id)
           form = StudentForm()
-          form.form_of_study.default = student.form_of_study
-          form.field_of_study.default = student.field_of_study
-          form.process()
-          fields = FieldModel.find_all_in_form(student.form_of_study)
+          fields = FieldModel.find_all_in_form("full-time")
           form.field_of_study.choices = [field.field for field in fields]
+          if request.method == "POST":
+               fieldform = form.field_of_study.data
+               fieldofstudy = form.form_of_study.data
+               print(fieldofstudy, fieldform)
+              
           return render_template("student.html", student = student, form=form)
      else:
           return {"message": "access denied"}
