@@ -1,4 +1,10 @@
 # SchoolApi
+
+Web app built for universities containg recruitment system, student's profiles and dashboard for admins.
+
+Built with: Python, HTML, CSS, JavaScript, Postgresql
+
+
 <img width="788" alt="image" src="https://user-images.githubusercontent.com/82653550/210444692-13dc0f51-3d44-445c-94e8-3ce92c97c77f.png">
 <img width="797" alt="image" src="https://user-images.githubusercontent.com/82653550/210444781-1014f913-7bef-46de-8dbc-826d294d9f73.png">
 <img width="899" alt="Zrzut ekranu 2023-01-03 223646" src="https://user-images.githubusercontent.com/82653550/210445391-bba58385-86d2-44d3-90aa-1349bbf6e0f3.png">
