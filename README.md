@@ -2,7 +2,7 @@
 
 Web app built for universities containg recruitment system, student's profiles and dashboard for admins.
 
-Built with: Python, HTML, CSS, JavaScript, Postgresql
+Built with: Python, Flask, HTML, CSS, JavaScript, Postgresql
 
 
 ## Screenshots from SchoolApi
