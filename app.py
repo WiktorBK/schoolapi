@@ -29,10 +29,8 @@ login_manager.login_view = 'login'
 
 
 def isadmin():
-     if current_user.role == 'admin':
-          return True
-     else:
-          return False
+     if current_user.role == 'admin': return True
+     return False
 
 @login_manager.user_loader
 def load_user(id):
@@ -41,6 +39,7 @@ def load_user(id):
 @app.errorhandler(404)
 def page_not_found(e):
      return render_template("404.html"), 404
+
 @app.errorhandler(500)
 def internal_server_error(e):
      return render_template("500.html"), 500
@@ -48,15 +47,12 @@ def internal_server_error(e):
 @app.route("/admin")
 @login_required
 def admin():
-     if isadmin():
-          return render_template('admin.html')
-     else:
-          return {"message": "access denied"}
+     if isadmin(): return render_template('admin.html')
+     return {"message": "access denied"}
 
 @app.route("/")
 def home():
      fields = FieldModel.find_all()
-
      return render_template('index.html', fields=fields)
 
 @app.route("/register", methods=["GET", "POST"])
@@ -171,8 +167,6 @@ def delete(personal_id_number):
           flash("Student could not be deleted") 
           return render_template("field.html",students=students,  field=field, fields=fields)  
 
-
-
 @app.route("/field/add", methods=["GET", "POST"])
 @login_required
 def add_field():
@@ -199,7 +193,6 @@ def add_field():
 @app.route("/field/<form>") 
 def field_(form):
      fields = FieldModel.find_all_in_form(form)
-
      fieldsList = []
 
      for field in fields:
@@ -323,17 +316,13 @@ def application():
                form.field_of_study.data= ''
                form.personal_id_number.data = ''
           
-            
      return render_template('application.html', form=form, already_sent=already_sent, application=application)
 
 @app.route("/applications-dashboard")
 @login_required
 def applications_site():
-     if isadmin():
-          return render_template('application-site.html')
-     else:
-          return {"message": "access denied"}
-
+     if isadmin(): return render_template('application-site.html')   
+     return {"message": "access denied"}
 
 @app.route("/applications")
 @login_required
@@ -392,8 +381,6 @@ def application_accept(application_id):
                     flash("Application couldn't be accepted") 
 
                return {"message": "application accepted"}
-
-
      else:     
           return {"message": "access denied"}
 
@@ -414,17 +401,13 @@ def application_details(application_id):
                if check:
                     application.mayapply = True
                else:
-                    application.mayapply = False
-                         
+                    application.mayapply = False       
                try:
                     flash("Application declined")
                     db.session.commit()
                except:
                     flash("couldn't perform this action... Try Again")
- 
-
                return redirect(url_for('applications'))
-
           return render_template("application_details.html", application=application, form=form)
     else:
       return{"message": "access denied"}
@@ -482,7 +465,6 @@ def student(student_id):
                fieldform = form.field_of_study.data
                fieldofstudy = form.form_of_study.data
                print(fieldofstudy, fieldform)
-              
           return render_template("student.html", student = student, form=form)
      else:
           return {"message": "access denied"}
