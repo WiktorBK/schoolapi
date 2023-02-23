@@ -9,7 +9,7 @@
 {%if already_sent%}
 <div class="alert alert-success" role="alert">
     <h4 class="alert-heading">Application Sent!</h4>
-    <p>Your application is now being reviewed. Whenever it's ready you will see the results in your <a href="{{url_for('dashboard')}}" class="alert-link">Dashboard</a>.
+    <p>Your application is now under review. Whenever it's ready you will see the results in your <a href="{{url_for('dashboard')}}" class="alert-link">Dashboard</a>.
     </p>
     <hr>
     <p class="mb-0">Click <a href="{{url_for('application_details', application_id = application.application_id)}}" class="alert-link">here</a> to see the details of your application</p>
