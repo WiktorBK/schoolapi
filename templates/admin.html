@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+     body{
+    color: #1a202c;
+    text-align: left;
+    background-color: #e5e5e5;    
+     }
+    .card {
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
+  width: 22%;
+  margin: 17px;
+}
+a{
+  text-decoration: None;
+  color: black;
+}
+a:hover{
+  color: black;
+}
+    .card:hover {
+  box-shadow: 0 16px 32px 0 rgba(0,0,0,0.2);
+    }
+  
+    .container{
+       padding: 5px 16px;
+       transition: 0.3s;
+
+    }
+#output{
+  font-size: 30px;
+  transition: 0.3s;
+}
+#output1{
+  font-size: 30px;
+}
+#output2{
+  font-size: 30px;
+}
+#output3{
+  font-size: 30px;
+}
+
+    @media (max-width: 1200px) {
+  h4{
+    font-size:20px;
+  }      
+  .card {
+    width: 25%;
+  }
+}
+
+@media (max-width: 780px) {
+  h4{
+    font-size:25px;
+  }     
+  p{
+    font-size: 15px;
+  } 
+  .card {
+    width: 45%;
+  }
+}
+@media (max-width: 500px) {
+  h4{
+    font-size:25px;
+  }     
+  p{
+    font-size: 15px;
+  } 
+  .card {
+    width: 50%;
+  }
+}
+
+ </style>
+{% for message in get_flashed_messages() %}
+	
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  {{ message }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+
+{% endfor %}
+
+
+ <center><h1>Admin Dashboard</h1></center>
+ <br/>
+<body onload="load()">
+
+    <div class="row">
+        <div class="card">
+          <a href="{{url_for('fields')}}">
+          <div class="container">
+            <center><h4><b>Fields</b></h4> 
+              <div id = "output"></div></center>
+            </div>
+          </a>
+          </div>    
+  
+  <div class="card">
+    <a href="{{url_for('students')}}">
+    <div class="container">
+      <center><h4><b>Students</b></h4> 
+        <div id = "output1">  </div></center>
+        </div>
+        </a>
+    </div>
+  
+  <div class="card">
+    <a href="{{url_for('applications_site')}}">
+    <div class="container">
+      <center><h4><b>Applications</b></h4> 
+      <div id = "output2"></center></div>
+      </a>
+    </div>
+
+	<div class="card">
+		<a href="{{url_for('users')}}">
+		<div class="container">
+		  <center><h4><b>Users</b></h4> 
+		  <div id = "output3"></center></div>
+		  </a>
+		</div>
+
+  </div>
+
+ <script>
+    function countTo(obj, from, to){
+    let step = to > from ? 1 : -1;
+    let interval = 50;
+
+    if(from == to){
+        obj = from;
+        return;
+    }
+
+    let counter = setInterval(function(){
+        from += step;
+        obj.textContent = from;
+
+        if(from == to){
+            clearInterval(counter);
+        }
+    }, interval);
+}
+
+let text1 = document.querySelector("#output")
+let text2 = document.querySelector("#output1")
+let text3 = document.querySelector("#output2")
+let text4 = document.querySelector("#output3")
+text1.textContent = "0"
+text2.textContent = "0"
+text3.textContent = "0"
+text4.textContent = "0"
+
+fetch('/get_data')
+  .then((response) => response.json())
+  .then((data) => {
+    countTo(text1, 0, data.field_count)
+    countTo(text2, 0, data.student_count)
+    countTo(text3, 0, data.application_count)
+    countTo(text4, 0, data.user_count)
+
+  })
+
+
+ </script>
+</body>
+
+{% endblock %}

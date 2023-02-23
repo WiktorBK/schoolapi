@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+      svg:hover{
+        stroke-width: 2.5;
+    }
+       body{
+    background-color: #e5e5e5;    
+   }
+</style>
+{% for message in get_flashed_messages() %}
+	
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+	   {{ message }}
+	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+{% endfor %}
+<a href="#" id="arrowback" onclick="history.back()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H6M12 5l-7 7 7 7"/></svg></a>
+<br/>
+<br/>
+<br/>
+<div class="col-md-5">
+    <div class="card mb-3">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm-3">
+            <h6 class="mb-0">First Name</h6>
+          </div>
+          <div class="col-sm-9 text-secondary">
+            {{user.name|capitalize}}
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col-sm-3">
+            <h6 class="mb-0">Last Name</h6>
+          </div>
+          <div class="col-sm-9 text-secondary">
+            {{user.surname}}
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col-sm-3">
+            <h6 class="mb-0">Email</h6>
+          </div>
+          <div class="col-sm-9 text-secondary">
+            {{user.email}}
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col-sm-3">
+            <h6 class="mb-0">Role</h6>
+          </div>
+          <div class="col-sm-9 text-secondary">
+            {{user.role}}
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col-sm-12">
+            <button style="margin: 0px" class="btn btn-info btn"  data-bs-toggle="modal" data-bs-target="#editModal">Edit</button>
+            {%if student%}
+            <a href="{{url_for('student', student_id=student.student_id)}}"><button style="margin: 0px 0px 0px 15px" class="btn btn-warning btn">Student Profile</button></a>
+            {%endif%}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+    
+  <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header" style="font-weight: bold">
+            <h4>Edit User Permissions</h4>
+          </div>
+            <div class="modal-body">
+              <form action="#" method="POST">
+                {{ form.hidden_tag()}}
+                {{ form.role.label(
+                    class="form-label")}}
+                {{ form.role(
+                    class="form-control")}}
+                <br/>
+                <div class="modal-footer" style="padding-bottom: 0px;">
+                    {{ form.submit(class ="btn btn-primary") }}
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+<script>
+ function deleteUser(user_id, o) {
+     var p=o.parentNode.parentNode;
+     p.parentNode.removeChild(p);
+
+    fetch('/delete/' + user_id).then(function(response) {
+ 
+    response.json().then(function(data) { 
+ })
+});
+}
+function edit() {
+    fetch('/edit/' + "{{user.user_id}}").then(function(response) {
+ 
+    response.json().then(function(data) { 
+ })
+});
+
+
+}
+</script>
+{% endblock %}
+

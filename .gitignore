@@ -2,6 +2,9 @@ venv/
 __pycache__/
 <<<<<<< HEAD
 migrations/
+<<<<<<< HEAD
 =======
 migrations/
 >>>>>>> 2ff673fe4a84b19ec2a2801e88ac7bdef2f091d5
+=======
+>>>>>>> temp
