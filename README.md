@@ -1,6 +1,6 @@
 # SchoolApi
 
-Web app built for universities containg recruitment system, student's profiles and dashboard for admins.
+Web app for universities containg recruitment system, student's profiles and dashboard for admins.
 
 Built with: Python, Flask, HTML, CSS, JavaScript, Postgresql
 
